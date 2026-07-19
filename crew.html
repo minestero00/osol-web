@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>크루 초대 — Osol</title>
+  <meta name="description" content="Osol 크루 초대 링크입니다. 앱에서 열어 크루에 참여하세요.">
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏍️</text></svg>">
+  <link rel="stylesheet" href="style.css">
+  <!-- 채팅앱 미리보기 카드 (초대는 대부분 카톡/DM으로 전달된다) -->
+  <meta property="og:title" content="Osol 크루 초대">
+  <meta property="og:description" content="함께 달릴 크루에 초대받았어요. 링크를 열어 참여하세요.">
+  <meta property="og:type" content="website">
+  <style>
+    /* --- 초대 브리지 (이 페이지 전용) --- */
+    .invite { padding: 72px 0 0; text-align: center; }
+    .invite .wordmark { font-size: 34px; margin: 0 0 36px; }
+
+    .code-card {
+      background: var(--surface); border: 1px solid var(--hair);
+      border-radius: 18px; padding: 26px 22px; margin: 0 0 24px;
+    }
+    .code-label {
+      text-transform: uppercase; letter-spacing: 0.14em; font-size: 11.5px;
+      font-weight: 700; color: var(--teal); margin: 0 0 12px;
+    }
+    .code {
+      font-size: clamp(30px, 9vw, 42px); font-weight: 800; letter-spacing: 0.16em;
+      font-variant-numeric: tabular-nums; color: var(--ink); margin: 0;
+      line-height: 1.1; word-break: break-all;
+    }
+    /* 한국어는 어절 중간에서 끊기면 읽기 나빠진다 ("참여합니 / 다.") */
+    .invite h1, .invite .lede, .fallback { word-break: keep-all; }
+    .invite h1 { font-size: clamp(22px, 5vw, 28px); margin: 0 0 10px; }
+    .invite .lede { margin: 0 auto 28px; max-width: 34ch; text-wrap: pretty; }
+
+    /* CTA 대비: 16px w700은 WCAG large-text(18.66px bold)가 아니라 4.5:1이 걸린다.
+       흰 글자 on --ember-case는 라이트 4.03 / 다크 2.62로 미달이므로,
+       라이트는 한 단계 어두운 ember 채움(4.81:1), 다크는 밝은 ember 위에
+       딥 잉크(5.78:1)로 뒤집는다. */
+    .cta {
+      display: block; width: 100%; background: #BE5026; color: #FFF;
+      border: none; border-radius: 15px; padding: 17px 20px;
+      font: inherit; font-size: 16px; font-weight: 700; text-decoration: none;
+      cursor: pointer; text-align: center;
+    }
+    @media (prefers-color-scheme: dark) {
+      .cta { background: var(--ember); color: #16181A; }
+    }
+    .cta:focus-visible { outline: 2px solid var(--teal); outline-offset: 3px; }
+
+    /* 설치 안내는 CTA를 누른 뒤에만 의미가 있다 — 기본은 접어 둔다. */
+    .fallback {
+      margin: 22px 0 0; padding: 18px 20px; background: var(--surface);
+      border: 1px solid var(--hair); border-radius: 14px;
+      font-size: 14.5px; color: var(--ink-2); text-align: left;
+    }
+    .fallback p { margin: 0 0 8px; }
+    .fallback p:last-child { margin: 0; }
+    .fallback strong { color: var(--ink); }
+    [hidden] { display: none !important; }
+
+    .invite footer.site { justify-content: center; text-align: center; }
+  </style>
+</head>
+<body>
+  <div class="wrap invite">
+    <p class="wordmark">Osol<span class="dot">.</span></p>
+
+    <!-- 정상 경로: 초대 코드가 있을 때 -->
+    <div id="ok" hidden>
+      <p class="eyebrow">크루 초대</p>
+      <h1>함께 달릴 크루에 초대받았어요</h1>
+      <p class="lede">아래 버튼을 누르면 Osol 앱이 열리고 크루에 참여합니다.</p>
+
+      <div class="code-card">
+        <p class="code-label">초대 코드</p>
+        <p class="code" id="code"></p>
+      </div>
+
+      <a class="cta" id="open" href="#">Osol 앱에서 열기</a>
+
+      <div class="fallback" id="fallback" hidden>
+        <p><strong>앱이 열리지 않았나요?</strong></p>
+        <p>Osol을 아직 설치하지 않으셨다면, 설치한 뒤 이 링크를 다시 열어주세요. 앱 안에서 위 초대 코드를 직접 입력해 참여할 수도 있습니다.</p>
+      </div>
+    </div>
+
+    <!-- 코드가 없거나 깨진 링크 -->
+    <div id="bad" hidden>
+      <p class="eyebrow">크루 초대</p>
+      <h1>초대 코드가 없어요</h1>
+      <p class="lede">링크가 잘린 것 같습니다. 초대한 분에게 링크를 다시 받아주세요.</p>
+    </div>
+
+    <footer class="site">
+      <span>© 2026 Osol</span>
+      <a href="./">홈</a>
+      <a href="privacy.html">개인정보 처리방침</a>
+    </footer>
+  </div>
+
+  <script>
+    (function () {
+      // 앱의 crewCodeFromUri와 같은 규칙: 대문자 정규화 + 영숫자만 허용.
+      // 링크로 들어온 값이므로 화면에는 textContent로만 넣는다(마크업 주입 차단).
+      var raw = new URLSearchParams(location.search).get('code') || '';
+      var code = raw.trim().toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 32);
+
+      if (!code) {
+        document.getElementById('bad').hidden = false;
+        return;
+      }
+
+      document.getElementById('ok').hidden = false;
+      document.getElementById('code').textContent = code;
+
+      var target = 'osol://crew/join?code=' + encodeURIComponent(code);
+      var open = document.getElementById('open');
+      open.href = target;
+
+      // 자동 리다이렉트는 하지 않는다: 앱이 없는 기기에서 커스텀 스킴을 열면
+      // iOS Safari가 "주소가 잘못됐습니다" 경고를 띄우기 때문에, 첫 화면부터
+      // 실패처럼 보인다. 사용자가 직접 누르게 하고, 그 뒤에야 설치 안내를 편다.
+      open.addEventListener('click', function () {
+        setTimeout(function () {
+          // 앱이 열렸다면 이 탭은 백그라운드로 가므로 안내를 펴지 않는다.
+          if (document.hidden) return;
+          document.getElementById('fallback').hidden = false;
+        }, 1200);
+      });
+    })();
+  </script>
+</body>
+</html>
