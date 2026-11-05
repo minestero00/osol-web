@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <rect width="1024" height="1024" rx="224" fill="#3155D9"/><defs><clipPath id="disc"><circle cx="512" cy="512" r="300"/></clipPath></defs>
+  <path id="left-bank" clip-path="url(#disc)" fill="#FFFFFF" d="M0 0 H578 V190 C578 326 393 362 393 489 C393 616 631 651 631 834 V1024 H0 Z"/>
+  <path id="right-bank" clip-path="url(#disc)" fill="#FFFFFF" d="M667 0 H1024 V1024 H720 V834 C720 600 482 576 482 489 C482 402 667 363 667 190 Z"/>
+</svg>
