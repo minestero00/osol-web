@@ -1,0 +1,15 @@
+{
+  "source_commit": "259ffb70a435908dea365be5e216a04c6b0d748d",
+  "documents": [
+    {
+      "path": "legal/terms/2026-07-21.html",
+      "version": "2026-07-21",
+      "sha256": "b1ab30923282b4faac26e60a60c68c23cff3379d6ad13cad89a400e6c788e632"
+    },
+    {
+      "path": "legal/privacy/2026-07-17.html",
+      "version": "2026-07-17",
+      "sha256": "9bb4272cfbdf32cc9aded9f0ab2a709ad4440a684ef088300643f0f7edaababf"
+    }
+  ]
+}

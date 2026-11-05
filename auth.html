@@ -3,9 +3,10 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>이메일 확인 — Osol</title>
-  <meta name="description" content="Osol 이메일 확인 링크입니다. 앱에서 열어 가입을 마치세요.">
+  <title>이메일 인증 — Osol</title>
+  <meta name="description" content="이메일 확인과 비밀번호 재설정을 Osol 앱에서 이어가세요.">
   <meta name="robots" content="noindex">
+  <meta name="referrer" content="no-referrer">
   <meta name="color-scheme" content="light dark">
   <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
   <link rel="stylesheet" href="style.css">
@@ -16,33 +17,33 @@
 
     <!-- 정상: 확인 코드가 실려 왔을 때 -->
     <div id="ok" hidden>
-      <p class="eyebrow">이메일 확인</p>
-      <h1>앱에서 메일 확인을 이어가요</h1>
-      <p class="lede">아래 버튼을 눌러 가입을 시작한 앱에서 확인을 마쳐주세요.</p>
+      <p class="eyebrow">이메일 인증</p>
+      <h1>앱에서 인증을 이어가요</h1>
+      <p class="lede">이메일 확인이나 비밀번호 재설정을 요청한 앱에서 계속해주세요.</p>
 
       <a class="cta" id="open" href="#">Osol 앱에서 계속하기</a>
 
       <div class="note same-device">
-        <p><strong>가입을 시작한 그 기기에서 열어주세요.</strong></p>
-        <p>보안을 위해 가입을 시작한 앱에만 있는 값으로 확인을 마칩니다. 다른 기기(예: 데스크톱)에서 이 링크를 열면 완료되지 않아요 — 폰에서 같은 메일을 열어 눌러주세요.</p>
+        <p><strong>메일을 요청한 그 기기에서 열어주세요.</strong></p>
+        <p>보안을 위해 메일을 요청한 앱에만 있는 값으로 인증을 마칩니다. 다른 기기에서 열면 완료되지 않아요. 요청한 폰에서 가장 최근 메일의 링크를 눌러주세요.</p>
       </div>
 
       <div class="note" id="fallback" hidden>
         <p><strong>앱이 열리지 않았나요?</strong></p>
-        <p>Osol을 아직 설치하지 않으셨다면 설치한 뒤 이 링크를 다시 열어주세요. 앱을 지웠다가 다시 깔았다면 확인 메일을 새로 요청해야 합니다.</p>
+        <p>Osol을 아직 설치하지 않으셨다면 설치한 뒤 이 링크를 다시 열어주세요. 앱을 지웠다가 다시 깔았다면 앱에서 인증 메일을 새로 요청해야 합니다.</p>
       </div>
     </div>
 
     <!-- Supabase가 오류를 실어 보낸 경우 (만료·이미 사용됨 등) -->
     <div id="bad" hidden>
-      <p class="eyebrow">이메일 확인</p>
+      <p class="eyebrow">이메일 인증</p>
       <h1 id="bad-title">링크가 만료됐어요</h1>
-      <p class="lede" id="bad-body">확인 링크는 일정 시간이 지나면 만료됩니다. 앱에서 확인 메일을 다시 받아주세요.</p>
+      <p class="lede" id="bad-body">인증 링크는 일정 시간이 지나면 만료됩니다. 앱 로그인 화면에서 확인 메일이나 비밀번호 재설정 메일을 다시 요청해주세요.</p>
     </div>
 
     <!-- 코드도 오류도 없이 그냥 들어온 경우 -->
     <div id="plain" hidden>
-      <p class="eyebrow">이메일 확인</p>
+      <p class="eyebrow">이메일 인증</p>
       <h1>확인할 내용이 없어요</h1>
       <p class="lede">메일에 있는 링크를 그대로 눌러주세요. 주소를 직접 입력하면 확인 코드가 빠집니다.</p>
     </div>
@@ -70,7 +71,7 @@
         if (!/expired|otp_expired/i.test(err + ' ' + desc)) {
           document.getElementById('bad-title').textContent = '확인하지 못했어요';
           document.getElementById('bad-body').textContent =
-            '이 링크로는 확인을 마칠 수 없었어요. 앱에서 확인 메일을 다시 받아주세요.';
+            '이 링크로는 인증을 마칠 수 없었어요. 앱 로그인 화면에서 확인 메일이나 비밀번호 재설정 메일을 다시 요청해주세요.';
         }
         return;
       }
@@ -86,8 +87,7 @@
       document.getElementById('ok').hidden = false;
 
       // 받은 파라미터를 그대로 앱에 넘긴다 — 코드 형식을 여기서 해석하지 않는다.
-      var target = 'osol://login-callback?' +
-        (location.search ? location.search.slice(1) : location.hash.slice(1));
+      var target = 'osol://login-callback' + location.search + location.hash;
       var open = document.getElementById('open');
       open.href = target;
 
