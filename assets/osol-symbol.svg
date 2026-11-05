@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="212 212 600 600">
+  <style>@media (prefers-color-scheme: dark) { path { fill: #A5BAFF; } }</style><defs><clipPath id="disc"><circle cx="512" cy="512" r="300"/></clipPath></defs>
+  <path id="left-bank" clip-path="url(#disc)" fill="#3155D9" d="M0 0 H578 V190 C578 326 393 362 393 489 C393 616 631 651 631 834 V1024 H0 Z"/>
+  <path id="right-bank" clip-path="url(#disc)" fill="#3155D9" d="M667 0 H1024 V1024 H720 V834 C720 600 482 576 482 489 C482 402 667 363 667 190 Z"/>
+</svg>
