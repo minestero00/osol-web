@@ -148,8 +148,12 @@ final publication. These are provider-specific facts, not a shared period for al
   Source is main `02955e5`. This is internal TestFlight processing/distribution evidence,
   not public App Store release or actual-device acceptance.
 - Android APK228: built from `8436530`, which fixes the Apple callback manifest filter
-  to `android:host="callback"` for `signinwithapple://callback?...`. PR151's CI and
-  merge/public distribution remain separate pending gates at this check.
+  to `android:host="callback"` for `signinwithapple://callback?...`. PR151 passed all six
+  checks and merged as `7171f2e`; its source tree matches the APK source tree.
+  [Release228](https://github.com/minestero00/Osol/releases/tag/v1.0.0-beta.228)
+  was published at 2026-11-11 12:28:40 UTC. All five server-side asset SHA-256 values
+  matched, and the actual downloaded APK, manifest and SHA256SUMS matched at 12:29:28 UTC.
+  This verifies publication and artifact integrity; it does not establish device acceptance.
 - The difference is Android-only; preserve each platform's source SHA rather than
   representing both binaries as built from the same revision. Actual Google/Apple login,
   microphone/voice rejoin, push, location and accessibility checks on a physical device
