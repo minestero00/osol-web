@@ -20,7 +20,7 @@ changes to published files is publication.
   qualifier from Apple login (Android uses an OAuth browser flow).
 - Home/help navigation exposes the request page. Existing shared CSS is reused.
 
-The user confirmed individual operation and continued use of the published
+The user confirmed individual operation, public responsible-person name 조민제, and continued use of the published
 `superriaco@gmail.com` address. No company registration, paid account or invented
 business particulars are needed for this factual draft. Email delivery and
 fulfillment were not tested by sending a message. A mailto link is a request path,
@@ -43,15 +43,17 @@ not a deletion backend.
 
 ## Remaining decisions and execution contracts
 
-The user resolved operating status (individual) and support email (unchanged).
-Remaining owner decisions are reduced to public responsible-person display,
-executable retention/cleanup criteria, and the publication schedule. Detailed,
+The user resolved individual operating status, responsible-person name 조민제, and support email (unchanged).
+Remaining owner approvals are retention/cleanup rules for the private backup, support mail
+and operational logs, plus the publication schedule. Detailed,
 concrete proposals are in `_drafts/legal/owner-decisions.md`.
 
 `_drafts/legal/retention-and-providers.md` separates current code, production facts
 reported by root, unverified provider settings, and proposed cleanup. Completed
-receipts lose user_id and are queryable for 30 days, but physical purge is currently
-opportunistic; do not claim exact 30-day deletion. The private pre-migration dump
+receipts clear user_id and voice room identifiers across all aliases and are queryable for 30 days.
+The new migration schedules daily purge at 03:17 UTC after that window (normally 30–31 days
+of physical retention), but production 0024 and cron verification are pending. Pending tasks
+are retained until resolved. Do not describe lookup expiry alone as physical deletion. The private pre-migration dump
 includes auth/public/storage metadata and needs an actual expiry/disposal contract.
 A hosted-backup list with 0 entries does not prove absence of provider internal copies.
 
@@ -59,7 +61,8 @@ Root reports live 0022/0023 migration and isolated test-account checks for login
 consent false/true, forbidden writes and a cap of 3 presets and rejection of the fourth passed; 5 legacy accounts
 remain. These checks are not OAuth, real email delivery or device evidence.
 Account-deletion code/tests are ready but final deployment/live verification
-remains distinct. Map proxy is upcoming; older clients can still access r2.dev.
+remains distinct. Runtime map assets are live and root verified 13 public checks; source PR149
+CI/merge and the new app release are separate. Older clients can still access r2.dev.
 
 Provider contract/region/transfer details should be investigated from actual
 accounts and official contracts, not handed to the user as a broad questionnaire.
@@ -97,6 +100,21 @@ and its official attached PDF on 2026-11-11, focusing on retention, outsourcing,
 overseas transfers, responsible-person/contact and revision-history sections.
 The draft distinguishes specific retention periods/determinable criteria,
 provider processing vs overseas transfers, and current vs prior document versions.
-A public responsible-person or appropriate privacy/grievance contact is still
-needed; the source does not justify inventing a company, department or phone.
+The confirmed responsible-person name 조민제 and existing support email are reflected;
+the source does not justify inventing a company, department or phone.
 This source check is not legal approval.
+
+## Authentication email preparation (not yet active)
+
+Root configured a Resend account and private API key, `auth.minestero.com` sender
+domain, `noreply@auth.minestero.com` sender and `ap-northeast-1` sending region.
+Open/click tracking and inbound receiving are disabled. Four DNS records are being
+added by the user; SMTP activation and actual delivery remain unverified. The
+pending root `minestero.com` domain is preserved, and Gmail remains support.
+The draft describes this as pending, not as current production mail delivery or
+a guarantee that all provider metadata stays in the chosen sending region.
+The [official Resend region documentation](https://resend.com/docs/dashboard/domains/regions)
+explicitly places account data, including email metadata, logs and API records,
+in the United States regardless of sending region. The current public DPA names
+Plus Five Five, Inc. These documented facts are reflected without inventing
+unconfirmed retention durations or assuming every provider has the same jurisdiction.
