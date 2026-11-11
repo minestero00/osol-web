@@ -22,8 +22,10 @@ changes to published files is publication.
 
 The user confirmed individual operation, public responsible-person name 조민제, and continued use of the published
 `superriaco@gmail.com` address. No company registration, paid account or invented
-business particulars are needed for this factual draft. Email delivery and
-fulfillment were not tested by sending a message. A mailto link is a request path,
+business particulars are needed for this factual draft. Sending a support/deletion request
+to the Gmail mailbox and its manual fulfillment have not been tested. Separately, two
+Supabase authentication emails were actually delivered and received by the user; that
+does not prove support-mailbox request fulfillment. A mailto link is a request path,
 not a deletion backend.
 
 ## Factual privacy differences found
@@ -39,30 +41,49 @@ not a deletion backend.
 | No provider is involved in self-hosted map/routing data | Map assets use Cloudflare R2; routing/search runs on an Oracle Tokyo VM. LiveKit carries crew voice. Requests involve provider infrastructure; the absolute claim that no personal information reaches third parties cannot be maintained. Actual contracts, locations, logs and retention need owner confirmation. |
 | Supabase processing is described only as Seoul | The primary social DB is Seoul; auth/email delivery, edge executions, CDN, push, voice and infrastructure logs require separate confirmation. Do not generalize the DB region to every provider. |
 | App uninstall removes server session/account data | Uninstalling the app is not an account deletion request and does not prove server-side token/session removal. Provide the explicit request path. |
-| Account data and Storage are all immediately deleted | Full deletion implementation and production validation are in progress in Osol. Published language must match its final failure/retry, crew ownership, Apple revocation and retention behavior. |
+| Account data and Storage are all immediately deleted | 0024 and three deletion-related functions are deployed; dedicated-account password/capability deletion and Storage/crew cleanup passed. Published language must preserve failure/retry, Apple/provider validation and retention boundaries. |
 
 ## Remaining decisions and execution contracts
 
-The user resolved individual operating status, responsible-person name 조민제, and support email (unchanged).
-Remaining owner approvals are retention/cleanup rules for the private backup, support mail
-and operational logs, plus the publication schedule. Detailed,
-concrete proposals are in `_drafts/legal/owner-decisions.md`.
+The user resolved individual operating status, responsible-person name 조민제 and support
+email (unchanged). The user also approved these operating rules:
 
-`_drafts/legal/retention-and-providers.md` separates current code, production facts
-reported by root, unverified provider settings, and proposed cleanup. Completed
-receipts clear user_id and voice room identifiers across all aliases and are queryable for 30 days.
-The new migration schedules daily purge at 03:17 UTC after that window (normally 30–31 days
-of physical retention), but production 0024 and cron verification are pending. Pending tasks
-are retained until resolved. Do not describe lookup expiry alone as physical deletion. The private pre-migration dump
-includes auth/public/storage metadata and needs an actual expiry/disposal contract.
-A hosted-backup list with 0 entries does not prove absence of provider internal copies.
+- Private work backups: dispose within seven days after validation, no later than
+  2026-11-18; document a reason and new expiry before the deadline if validation is unfinished.
+- Completed support/deletion-request mail: retain for 90 days after closure and manually
+  clean up monthly. Pending requests remain until resolved. This is an approved rule,
+  not an implemented automatic purge or evidence of completed cleanup.
 
-Root reports live 0022/0023 migration and isolated test-account checks for login,
-consent false/true, forbidden writes and a cap of 3 presets and rejection of the fourth passed; 5 legacy accounts
-remain. These checks are not OAuth, real email delivery or device evidence.
-Account-deletion code/tests are ready but final deployment/live verification
-remains distinct. Runtime map assets are live and root verified 13 public checks; source PR149
-CI/merge and the new app release are separate. Older clients can still access r2.dev.
+Publication dates remain unapproved. Provider-specific logs need a concrete execution
+plan and final disclosure before notice; actual VM containers currently have no verified
+rotation/expiry setting. Detailed status and proposals are in
+`_drafts/legal/owner-decisions.md` and `_drafts/legal/log-retention-findings.md`.
+
+`_drafts/legal/retention-and-providers.md` separates deployed behavior, root's live evidence,
+unverified provider settings and approved/manual cleanup rules. Migration 0024 and
+`delete-account`, `apple-delete-callback`, `livekit-token` are deployed from Osol `d4c6700`;
+PR150 merged as main `02955e5`. Completed receipts clear user_id and voice room identifiers
+across all aliases and are queryable for 30 days. The daily purge is scheduled for 03:17 UTC
+(normally 30–31 days of physical retention). Root executed the same cleanup command in an
+actual temporary pg_cron probe: one expired owned fixture was deleted successfully, the probe
+was unscheduled, and the original daily job remains `17 3 * * *`. This proves actual command
+execution, not continuous future job uptime. Pending requests remain until resolved.
+The separate private auth/public/storage metadata dump follows the approved backup rule;
+account deletion does not automatically rewrite it. A hosted-backup list with zero entries
+does not prove absence of provider internal copies.
+
+Root verified live 0022/0023 login, consent, RLS and three-preset-cap behavior. Two owned
+accounts subsequently passed live password-authenticated and no-Auth capability recovery
+deletion, Storage API cleanup including server-uploaded owner-NULL prefix objects, crew
+leader transfer, last-member crew/session cascade, two receipt aliases with identifiers
+cleared, and pending upload/new voice-token rejection. Existing five users, five profiles,
+two crews and one Storage object were unchanged. Actual Google/Apple reauthentication,
+active media disconnect/rejoin and physical-device validation remain separate gates.
+The user added Apple's callback Return URL; registration alone is not an OAuth E2E result.
+
+Runtime map assets are live, root verified 13 public checks, and source PR149 is merged.
+Older clients can still access r2.dev. App build and distribution evidence appears below;
+it does not establish old-client retirement or physical-device success.
 
 Provider contract/region/transfer details should be investigated from actual
 accounts and official contracts, not handed to the user as a broad questionnaire.
@@ -80,8 +101,8 @@ A conditional schedule is notice on 2026-11-12 / effect on 2026-12-12, reflectin
 dates; produce new immutable HTML snapshot paths and hashes; update latest pages;
 coordinate the Flutter supported policy versions and server policy together.
 Publishing a legal revision is a separate action from publishing support/help.
-The existing legal README's old “branch remains local” deployment note predates
-the already published snapshots and must not be used as current deployment status.
+The legal README records the already published initial snapshots; it does not authorize
+publication of these proposed revisions.
 
 ## Store source checks
 
@@ -104,17 +125,32 @@ The confirmed responsible-person name 조민제 and existing support email are r
 the source does not justify inventing a company, department or phone.
 This source check is not legal approval.
 
-## Authentication email preparation (not yet active)
+## Authentication email delivery verified
 
-Root configured a Resend account and private API key, `auth.minestero.com` sender
-domain, `noreply@auth.minestero.com` sender and `ap-northeast-1` sending region.
-Open/click tracking and inbound receiving are disabled. Four DNS records are being
-added by the user; SMTP activation and actual delivery remain unverified. The
-pending root `minestero.com` domain is preserved, and Gmail remains support.
-The draft describes this as pending, not as current production mail delivery or
-a guarantee that all provider metadata stays in the chosen sending region.
+Root verified the `minestero.com` sending domain and connected Supabase SMTP over port465
+with domain-only sending credentials. Sending region is Tokyo (`ap-northeast-1`). Two actual
+signup/recovery emails were delivered and the user confirmed receipt; PKCE exchanges and
+signup consent records passed. The initial Full Access setup key was revoked.
+Open/click tracking is disabled. The app's authentication flow does not process inbound mail;
+the existing root domain's Enable Receiving ON setting was preserved. Gmail remains support.
+Support-mail request fulfillment has not been tested by these authentication-email checks.
+
 The [official Resend region documentation](https://resend.com/docs/dashboard/domains/regions)
-explicitly places account data, including email metadata, logs and API records,
-in the United States regardless of sending region. The current public DPA names
-Plus Five Five, Inc. These documented facts are reflected without inventing
-unconfirmed retention durations or assuming every provider has the same jurisdiction.
+places account data, including email metadata, logs and API records, in the United States
+regardless of sending region. The current public DPA names Plus Five Five, Inc.
+[Resend's retention documentation](https://resend.com/security/gdpr/) states 30-day email/log
+retention on Free/Pro/Scale and seven-day backups; confirm the applicable plan/contract before
+final publication. These are provider-specific facts, not a shared period for all services.
+
+## Build228 distribution evidence
+
+- iOS IPA228: App Store Connect reports VALID and IN_BETA_TESTING for `Osol 내부`.
+  Source is main `02955e5`. This is internal TestFlight processing/distribution evidence,
+  not public App Store release or actual-device acceptance.
+- Android APK228: built from `8436530`, which fixes the Apple callback manifest filter
+  to `android:host="callback"` for `signinwithapple://callback?...`. PR151's CI and
+  merge/public distribution remain separate pending gates at this check.
+- The difference is Android-only; preserve each platform's source SHA rather than
+  representing both binaries as built from the same revision. Actual Google/Apple login,
+  microphone/voice rejoin, push, location and accessibility checks on a physical device
+  are not claimed by either successful build or store processing state.
