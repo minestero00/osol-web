@@ -6,5 +6,11 @@
     "test": "playwright test",
     "format:check": "prettier --check '*.html' style.css site.js theme.js tests/*.cjs playwright.config.cjs"
   },
-  "devDependencies": {"@axe-core/playwright":"4.14.0","@playwright/test":"1.65.1","prettier":"3.10.1"}
+  "devDependencies": {
+    "@axe-core/playwright": "4.14.0",
+    "@playwright/test": "1.65.1",
+    "prettier": "3.10.1",
+    "maplibre-gl": "6.18.0",
+    "pmtiles": "4.5.0"
+  }
 }

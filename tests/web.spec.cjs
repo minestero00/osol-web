@@ -121,78 +121,29 @@ test("blocked storage, view-transition fallback and mobile navigation", async ({
   await page.locator(".nav-links a").last().click();
   await expect(page).toHaveURL(/help.html/);
 });
-test("route preference keyboard and direct pointer tracking with bounded resistance", async ({
-  page,
-}) => {
-  await page.goto("/");
-  const buttons = page.locator("[data-preference]");
-  await buttons.first().focus();
-  await page.keyboard.press("ArrowRight");
-  await expect(buttons.nth(1)).toHaveAttribute("aria-pressed", "true");
-  const stage = page.locator("#route-explorer");
-  await stage.scrollIntoViewIfNeeded();
-  const box = await stage.boundingBox();
-  const x = box.x + box.width / 2,
-    y = box.y + box.height * 0.4;
-  await page.mouse.move(x, y);
-  await page.mouse.down();
-  await page.mouse.move(x + 30, y, { steps: 3 });
-  expect(
-    await stage.evaluate((e) =>
-      parseFloat(e.style.getPropertyValue("--drag-x")),
-    ),
-  ).toBeCloseTo(30, 0);
-  await page.mouse.move(x + 70, y, { steps: 3 });
-  await page.mouse.up();
-  await expect(buttons.first()).toHaveAttribute("aria-pressed", "true");
-  await expect
-    .poll(() =>
-      stage.evaluate((e) => parseFloat(e.style.getPropertyValue("--drag-x"))),
-    )
-    .toBe(0);
-  await page.mouse.move(x, y);
-  await page.mouse.down();
-  await page.mouse.move(x + 60, y, { steps: 3 });
-  const resisted = await stage.evaluate((e) =>
-    parseFloat(e.style.getPropertyValue("--drag-x")),
-  );
-  expect(resisted).toBeGreaterThan(0);
-  expect(resisted).toBeLessThan(60);
-  await page.mouse.up();
-  await expect
-    .poll(() =>
-      stage.evaluate((e) => parseFloat(e.style.getPropertyValue("--drag-x"))),
-    )
-    .toBe(0);
-  await buttons.first().focus();
-  await page.keyboard.press("End");
-  await expect(buttons.nth(2)).toHaveAttribute("aria-pressed", "true");
-});
-test("reduced motion, high contrast and screenshot tour", async ({
+test("real route cartography follows theme with reduced motion and contrast", async ({
   page,
 }, info) => {
-  await page.emulateMedia({ reducedMotion: "reduce", contrast: "more" });
+  await page.emulateMedia({
+    reducedMotion: "reduce",
+    contrast: "more",
+    colorScheme: "light",
+  });
   await page.goto("/");
-  const stage = page.locator("#route-explorer");
-  await stage.scrollIntoViewIfNeeded();
-  const box = await stage.boundingBox();
-  await page.mouse.move(box.x + box.width * 0.7, box.y + box.height * 0.4);
-  await page.mouse.down();
-  await page.mouse.move(box.x + box.width * 0.3, box.y + box.height * 0.4);
-  expect(
-    await stage.evaluate((e) =>
-      parseFloat(e.style.getPropertyValue("--drag-x") || "0"),
-    ),
-  ).toBe(0);
-  await page.mouse.up();
-  await page.locator("[data-screen=record]").click();
+  await expect(page.locator(".map-light")).toBeVisible();
+  await expect(page.locator(".map-dark")).toBeHidden();
+  await expect(page.locator("#real-route-title")).toHaveText(
+    "부산 미포 → 송정",
+  );
+  await page.locator(".theme-button").click();
+  await page.locator("[data-theme-choice=dark]").click();
+  await expect(page.locator(".map-dark")).toBeVisible();
+  await expect(page.locator(".map-light")).toBeHidden();
   await expect(page.locator("#app-screen")).toHaveAttribute(
     "src",
-    "assets/screens/record.png",
+    "assets/screens/crew.png",
   );
-  await page.locator("[data-screen=crew]").click();
-  await expect(page.locator("#screen-caption")).toHaveText("크루와 준비하기");
-  await capture(page, "home-reduced-contrast-crew", info);
+  await capture(page, "home-real-route-reduced-contrast", info);
 });
 test("FAQ search results, no results, reset, and question disclosure", async ({
   page,

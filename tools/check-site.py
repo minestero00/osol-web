@@ -32,7 +32,7 @@ class Document(HTMLParser):
 
 errors = []
 documents = {p: Document(p.read_text()) for p in ROOT.rglob('*.html')
-             if not {'node_modules', 'test-results', 'playwright-report'} & set(p.parts)}
+             if not {'node_modules', 'test-results', 'playwright-report', 'tools'} & set(p.parts)}
 for file, document in documents.items():
     for duplicate in document.duplicates:
         errors.append(f'{file.relative_to(ROOT)}: duplicate id {duplicate}')
@@ -57,7 +57,20 @@ for name, expected in FROZEN.items():
 for item in json.loads((ROOT / 'docs/screenshot-provenance.json').read_text()):
     if hashlib.sha256((ROOT / item['asset']).read_bytes()).hexdigest() != item['sha256']:
         errors.append(f'Screenshot attribution/source mismatch: {item["asset"]}')
+maps = json.loads((ROOT / "docs/map-provenance.json").read_text())
+for item in maps["assets"]:
+    if hashlib.sha256((ROOT / item["path"]).read_bytes()).hexdigest() != item["sha256"]:
+        errors.append(f'Real map source mismatch: {item["path"]}')
+response = json.loads((ROOT / "assets/maps/route-response.json").read_text())["routes"][0]
+feature = json.loads((ROOT / "assets/maps/mipo-songjeong.geojson").read_text())
+if feature["geometry"] != response["geometry"]:
+    errors.append("Published route geometry differs from actual routing response")
+for metric in ("distance_m", "duration_s"):
+    if feature["properties"][metric] != response[metric]:
+        errors.append(f"Published route {metric} differs from routing response")
+if len(feature["geometry"]["coordinates"]) != maps["geometry_points"]:
+    errors.append("Route point count mismatch")
 if errors:
     print('\n'.join(errors), file=sys.stderr)
     sys.exit(1)
-print(f'PASS: {len(documents)} HTML documents, local assets/anchors, immutable policy and screenshot hashes')
+print(f'PASS: {len(documents)} HTML documents, local assets/anchors, immutable policy/screenshot hashes and real route provenance')

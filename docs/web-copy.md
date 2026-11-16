@@ -22,14 +22,13 @@ The mailto template asks only for account identification and request details.
 |---|---|
 | Hero | 가는 길도, 내 취향대로. / 이륜차 라이더를 위한 경로 안내, 주행 기록, 그리고 크루. |
 | CTA | Osol 시작하기 → installation instructions, not an unsupported store badge |
-| Route illustration | 경로 취향 미리보기 / 이해를 돕는 경로 예시입니다. 실제 탐색 결과가 아니에요. |
+| Actual map | 부산 미포 → 송정 / 실제 도로를 따라 찾은 경로 / 5.4km·약7분 / 2026.11.16 탐색 예시. Returned87points are unchanged; not live traffic. |
 | Routing | 이륜차 통행 제한과 도로 정보를 반영해 경로를 찾습니다. 실제 표지와 도로 상황을 우선 확인하세요. |
-| Preferences | 균형 있게 / 경치를 따라서 / 편안한 길로. Website examples describe priorities, not preset names guaranteed in the app. |
 | Privacy feature | 기록과 공유는 따로. 시작·끝 위치 보호와 공개 범위를 확인하고 공유하세요. |
 | Installation | Android 베타 APK / iPhone 베타 · 초대받은 참여자만. Public store channels unavailable. |
 | Support | 질문을 검색해 보세요 / 맞는 답변이 없어요 / 검색 지우기 / 문의 메일 작성. Draft opening is not sending. |
 | Crew code copy success / failure | 초대 코드를 복사했어요. / 복사하지 못했어요. 코드를 선택해 복사해 주세요. |
-| App preview | 경로 살피기 / 라이드 기록하기 / 크루와 준비하기. 예시 데이터로 촬영한 개발 베타 화면입니다. 설치 버전과 다를 수 있어요. |
+| App preview | 크루와 준비하기. 예시 데이터로 촬영한 개발 베타 화면입니다. 설치 버전과 다를 수 있어요. |
 | Narrow policy table | 표를 좌우로 움직여 전체 내용을 확인하세요. |
 | Crew handoff | 앱에서 초대 내용을 확인하고 참여를 이어가세요. Opening the web page never confirms membership. |
 | Theme | 화면 모드 / 기기 설정 / 라이트 / 다크 |

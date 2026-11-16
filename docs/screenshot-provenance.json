@@ -1,17 +1,5 @@
 [
   {
-    "asset": "assets/screens/route.png",
-    "source": "/Users/riaco/.cache/osol/current-ui-batch-b-20261113/release-20261115/map-run1/map-route-ready-light-normal.png",
-    "sha256": "dc04d012de47fc64768c8b6988e38e4ba3d4a933e0bc56fc362d2c76159bc02f",
-    "context": "2026-11-15 development beta, simulated example data, normal text size; not a build 231 screenshot"
-  },
-  {
-    "asset": "assets/screens/record.png",
-    "source": "/Users/riaco/.cache/osol/current-ui-batch-b-20261113/release-20261115/record-run3/record-active-light-normal.png",
-    "sha256": "8f2abe889daa7cbff700be517061b5ea901fd7b432fea4ef61f1d59b4c750ae7",
-    "context": "2026-11-15 development beta, simulated example data, normal text size; not a build 231 screenshot"
-  },
-  {
     "asset": "assets/screens/crew.png",
     "source": "/Users/riaco/.cache/osol/current-ui-batch-b-20261113/release-20261115/corrections-run1/audit-b-crew-detail-top-light-normal.png",
     "sha256": "475cb8a3f4c5edeac3b17dc5be538bff4c1a75db80926750630420b0e13506d3",
