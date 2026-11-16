@@ -1,86 +1,130 @@
 <!doctype html>
-<html lang="ko">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>크루 초대 — Osol</title>
-  <meta name="description" content="Osol 크루 초대 링크입니다. 앱에서 열어 크루에 참여하세요.">
-  <meta name="robots" content="noindex">
-  <meta name="color-scheme" content="light dark">
-  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
-  <link rel="stylesheet" href="style.css">
-  <!-- 채팅앱 미리보기 카드 (초대는 대부분 카톡/DM으로 전달된다) -->
-  <meta property="og:title" content="Osol 크루 초대">
-  <meta property="og:description" content="함께 달릴 크루에 초대받았어요. 링크를 열어 참여하세요.">
-  <meta property="og:type" content="website">
-</head>
-<body>
-  <main class="wrap invite">
-    <a class="wordmark" href="./" aria-label="Osol 홈"><img src="assets/osol-symbol.svg" width="40" height="40" alt="">Osol</a>
+<html lang="ko" class="no-js">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>크루 초대 — Osol</title>
+    <meta
+      name="description"
+      content="Osol 크루 초대 링크입니다. 앱에서 열어 크루에 참여하세요."
+    />
+    <meta name="robots" content="noindex" />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+    <script src="theme.js"></script>
+    <link rel="stylesheet" href="style.css" />
+    <script src="site.js" defer></script>
+    <!-- 채팅앱 미리보기 카드 (초대는 대부분 카톡/DM으로 전달된다) -->
+    <meta property="og:title" content="Osol 크루 초대" />
+    <meta
+      property="og:description"
+      content="함께 달릴 크루에 초대받았어요. 링크를 열어 참여하세요."
+    />
+    <meta property="og:type" content="website" />
+  </head>
+  <body>
+    <main class="wrap invite">
+      <a class="wordmark" href="./" aria-label="Osol 홈"
+        ><img
+          src="assets/osol-symbol.svg"
+          width="40"
+          height="40"
+          alt=""
+        />Osol</a
+      >
 
-    <!-- 정상 경로: 초대 코드가 있을 때 -->
-    <div id="ok" hidden>
-      <p class="eyebrow">크루 초대</p>
-      <h1>함께 달릴 크루에 초대받았어요</h1>
-      <p class="lede">아래 버튼을 누르면 Osol 앱이 열리고 크루에 참여합니다.</p>
+      <!-- 정상 경로: 초대 코드가 있을 때 -->
+      <div id="ok" hidden>
+        <p class="eyebrow">크루 초대</p>
+        <h1>함께 달릴 크루에 초대받았어요</h1>
+        <p class="lede">앱에서 초대 내용을 확인하고 참여를 이어가세요.</p>
 
-      <div class="code-card">
-        <p class="code-label">초대 코드</p>
-        <p class="code" id="code"></p>
+        <div class="code-card">
+          <p class="code-label">초대 코드</p>
+          <div class="code-actions">
+            <p class="code" id="code"></p>
+            <button
+              class="button secondary"
+              type="button"
+              data-copy="code"
+              data-js-only
+            >
+              코드 복사
+            </button>
+          </div>
+          <p class="copy-status" id="code-status" role="status"></p>
+        </div>
+
+        <a class="cta" id="open" href="#">Osol 앱에서 열기</a>
+
+        <div class="fallback" id="fallback" hidden>
+          <p><strong>앱이 열리지 않았나요?</strong></p>
+          <p>
+            Osol을 아직 설치하지 않으셨다면, 설치한 뒤 이 링크를 다시
+            열어주세요. 앱 안에서 위 초대 코드를 직접 입력해 참여할 수도
+            있습니다.
+          </p>
+        </div>
       </div>
 
-      <a class="cta" id="open" href="#">Osol 앱에서 열기</a>
-
-      <div class="fallback" id="fallback" hidden>
-        <p><strong>앱이 열리지 않았나요?</strong></p>
-        <p>Osol을 아직 설치하지 않으셨다면, 설치한 뒤 이 링크를 다시 열어주세요. 앱 안에서 위 초대 코드를 직접 입력해 참여할 수도 있습니다.</p>
+      <!-- 코드가 없거나 깨진 링크 -->
+      <div id="bad" hidden>
+        <p class="eyebrow">크루 초대</p>
+        <h1>초대 코드가 없어요</h1>
+        <p class="lede">
+          링크가 잘린 것 같습니다. 초대한 분에게 링크를 다시 받아주세요.
+        </p>
       </div>
-    </div>
 
-    <!-- 코드가 없거나 깨진 링크 -->
-    <div id="bad" hidden>
-      <p class="eyebrow">크루 초대</p>
-      <h1>초대 코드가 없어요</h1>
-      <p class="lede">링크가 잘린 것 같습니다. 초대한 분에게 링크를 다시 받아주세요.</p>
-    </div>
+      <footer class="site">
+        <span>© 2026 Osol</span>
+        <a href="./">홈</a>
+        <a href="download.html">설치 안내</a>
+        <a href="help.html">도움말</a>
+        <a href="privacy.html">개인정보 처리방침</a>
+      </footer>
+    </main>
 
-    <footer class="site">
-      <span>© 2026 Osol</span>
-      <a href="./">홈</a>
-      <a href="privacy.html">개인정보 처리방침</a>
-    </footer>
-  </main>
+    <noscript
+      ><p class="noscript-note">
+        이 링크를 확인하려면 JavaScript가 필요해요. 앱에서 직접 인증이나 초대
+        코드 입력을 이어가거나 <a href="help.html">도움말</a>을 확인해 주세요.
+      </p></noscript
+    >
+    <script>
+      (function () {
+        // 앱의 crewCodeFromUri와 같은 규칙: 대문자 정규화 + 영숫자만 허용.
+        // 링크로 들어온 값이므로 화면에는 textContent로만 넣는다(마크업 주입 차단).
+        var raw = new URLSearchParams(location.search).get("code") || "";
+        var code = raw
+          .trim()
+          .toUpperCase()
+          .replace(/[^A-Z0-9]/g, "")
+          .slice(0, 32);
 
-  <script>
-    (function () {
-      // 앱의 crewCodeFromUri와 같은 규칙: 대문자 정규화 + 영숫자만 허용.
-      // 링크로 들어온 값이므로 화면에는 textContent로만 넣는다(마크업 주입 차단).
-      var raw = new URLSearchParams(location.search).get('code') || '';
-      var code = raw.trim().toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 32);
+        if (!code) {
+          document.getElementById("bad").hidden = false;
+          return;
+        }
 
-      if (!code) {
-        document.getElementById('bad').hidden = false;
-        return;
-      }
+        document.getElementById("ok").hidden = false;
+        document.getElementById("code").textContent = code;
 
-      document.getElementById('ok').hidden = false;
-      document.getElementById('code').textContent = code;
+        var target = "osol://crew/join?code=" + encodeURIComponent(code);
+        var open = document.getElementById("open");
+        open.href = target;
 
-      var target = 'osol://crew/join?code=' + encodeURIComponent(code);
-      var open = document.getElementById('open');
-      open.href = target;
-
-      // 자동 리다이렉트는 하지 않는다: 앱이 없는 기기에서 커스텀 스킴을 열면
-      // iOS Safari가 "주소가 잘못됐습니다" 경고를 띄우기 때문에, 첫 화면부터
-      // 실패처럼 보인다. 사용자가 직접 누르게 하고, 그 뒤에야 설치 안내를 편다.
-      open.addEventListener('click', function () {
-        setTimeout(function () {
-          // 앱이 열렸다면 이 탭은 백그라운드로 가므로 안내를 펴지 않는다.
-          if (document.hidden) return;
-          document.getElementById('fallback').hidden = false;
-        }, 1200);
-      });
-    })();
-  </script>
-</body>
+        // 자동 리다이렉트는 하지 않는다: 앱이 없는 기기에서 커스텀 스킴을 열면
+        // iOS Safari가 "주소가 잘못됐습니다" 경고를 띄우기 때문에, 첫 화면부터
+        // 실패처럼 보인다. 사용자가 직접 누르게 하고, 그 뒤에야 설치 안내를 편다.
+        open.addEventListener("click", function () {
+          setTimeout(function () {
+            // 앱이 열렸다면 이 탭은 백그라운드로 가므로 안내를 펴지 않는다.
+            if (document.hidden) return;
+            document.getElementById("fallback").hidden = false;
+          }, 1200);
+        });
+      })();
+    </script>
+  </body>
 </html>

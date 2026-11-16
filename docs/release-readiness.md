@@ -1,4 +1,15 @@
-# Web release readiness — 2026-11-11
+# Web release readiness — 2026-11-16
+
+## Current merge and remaining work
+
+- Osol PR197 merged at `6f0cd23`; all six hosted gates passed at its reviewed head. The current APK/internal TestFlight still point to231, so a new signed beta is required to deliver the merged UI.
+- osol-web PR6 merged at `e13a893`; Chromium/WebKit60 tests,88 axe checks and fresh independent visual reviews passed. Main publishes the product site through GitHub Pages. See `qa-product-site.md` for scope and `map-provenance.json` for the actual map/87-point route.
+- PR5 integrates these **unpublished policy drafts**, reconciles0026/0029 and operational log/backup facts, and preserves all public policy bytes/consent versions. Branch integration is not a policy effective-date decision.
+- Remaining release work: new signed app build; Apple/email cold-start and deletion reauthentication; GPS/background/driving, voice between two devices, push and OS file/share/screen-reader checks; Apple Client Secret expiry confirmation; provider disclosures and policy dates/consent rollout; road-source freshness/national graph verification; store submission materials. Android offline download stays disabled until the SDK/JNI issue is fixed and device-verified.
+- These checks did not submit store builds, send user messages, change billing, activate a new policy, or modify operational DB/graph data. Source merge and web deployment must be reported separately from app distribution.
+
+The following November11 audit is historical context. Current technical corrections in `_drafts/legal/*` and `release-audit-2026-11-16.md` supersede its older228/EXIF/log-limit descriptions.
+
 
 Support PR #4 is merged at osol-web main `313c25c`. This legal-only branch starts
 from that main, carries the earlier audit without re-stacking the support change,

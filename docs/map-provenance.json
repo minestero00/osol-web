@@ -1,0 +1,52 @@
+{
+  "route_request": {
+    "request": {
+      "from": {
+        "lat": 35.1572,
+        "lng": 129.1749
+      },
+      "to": {
+        "lat": 35.1784,
+        "lng": 129.1996
+      },
+      "profile": "motorcycle",
+      "weights": {
+        "hazard_avoidance": 1.0,
+        "scenery": 0.8,
+        "curviness_pref": 0.3,
+        "quietness": 0.4,
+        "comfort": 0.6
+      }
+    },
+    "retrieved_at": "2026-11-16T00:31:18.556696+00:00",
+    "response_sha256": "667c53d3269db868fbac2e1f6df6d2a46b71434f7c18435317ecc9d97b127ead"
+  },
+  "app_source_commit": "b4960154887daf6618feba0a08e46f5681acb12f",
+  "style_source": "app/lib/map/osol_map_style.dart",
+  "style_source_sha256": "0595096369c8e17862e653736511ab9b1a40d28ea0c1d2480bd67d308b4cd44c",
+  "tiles": "https://api.minestero.com/maps/korea.pmtiles",
+  "glyphs": "https://api.minestero.com/maps/fonts/{fontstack}/{range}.pbf",
+  "renderer": "MapLibre GL JS 6.18.0 + PMTiles, exported unchanged OsolMapStyle.vector style; route line widths/colors mirror osol_map_layers.dart and osol_palette.dart",
+  "not_native_screenshot": true,
+  "geometry_points": 87,
+  "geometry_modified": false,
+  "evidence": "/Users/riaco/.cache/osol/web-refresh-20261105/20261116/real-map",
+  "assets": [
+    {
+      "path": "assets/maps/mipo-songjeong-dark.png",
+      "sha256": "56ae2dc429e30c0c379ebee4515bb42c16d4413762c46a82d34233185a39984b"
+    },
+    {
+      "path": "assets/maps/mipo-songjeong-light.png",
+      "sha256": "7ea72172a0d8f76ae2dd465640da5ef031ff807385f2d094cc6bc1648b1f4df6"
+    },
+    {
+      "path": "assets/maps/mipo-songjeong.geojson",
+      "sha256": "9c4214b24acdcd1deae3ff9c811ed3baadcb5d4df911575f0c3f69ad70a51e64"
+    },
+    {
+      "path": "assets/maps/route-response.json",
+      "sha256": "667c53d3269db868fbac2e1f6df6d2a46b71434f7c18435317ecc9d97b127ead"
+    }
+  ]
+}

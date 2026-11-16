@@ -1,0 +1,4 @@
+User-agent: *
+Disallow: /auth.html
+Disallow: /crew.html
+Sitemap: https://osol.minestero.com/sitemap.xml
