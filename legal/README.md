@@ -4,4 +4,4 @@ These versioned HTML snapshots preserve the terms/privacy content currently publ
 
 Once a version has shipped, keep its contents and hash unchanged. Publish a new path and policy revision for material changes. Update the supported Flutter form and server policy together; older forms must not attest to an unsupported revision. These initial snapshots retain historical policy text and do not certify that new, unreleased account features have been reviewed for publication.
 
-This branch remains local. The snapshot URLs must be published and verified before enabling the corresponding server policy or distributing the new app.
+The initial snapshot URLs are published on main and remain the currently referenced consent version. A future revision must use new paths and coordinated app/server policy changes; verify publication before distributing forms that depend on it.
