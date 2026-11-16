@@ -1,0 +1,10 @@
+{
+  "name": "osol-web",
+  "private": true,
+  "scripts": {
+    "check": "python3 tools/check-site.py && node --check site.js && node --check theme.js",
+    "test": "playwright test",
+    "format:check": "prettier --check '*.html' style.css site.js theme.js tests/*.cjs playwright.config.cjs"
+  },
+  "devDependencies": {"@axe-core/playwright":"4.14.0","@playwright/test":"1.65.1","prettier":"3.10.1"}
+}
