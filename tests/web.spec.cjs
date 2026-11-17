@@ -258,7 +258,7 @@ test("install links and nested 404 base", async ({ page }) => {
   await page.goto("/download.html");
   await expect(page.locator('a[href$=".apk"]')).toHaveAttribute(
     "href",
-    "https://api.minestero.com/app/releases/Osol-1.0.0-231.apk",
+    "https://api.minestero.com/app/releases/Osol-1.0.0-232.apk",
   );
   await page.route("**/missing/nested/page", (route) =>
     route.fulfill({

@@ -4,6 +4,8 @@ Owner Codex; branch `feat/product-site-refresh`, base main313c25c; existing prim
 
 ## Context and decisions
 
+2026-11-17 release232 handoff: existing visitors need the current install file and a concise account of what changed. Update only the existing platform build labels, APK target, release notes and verification date. Preserve the invited-only TestFlight explanation and existing page hierarchy. The branch is a candidate until both artifacts and the public manifest are verified; run the release-link check before merging. No new interaction or policy change.
+
 The visitor is a Korean motorcycle rider deciding whether Osol fits a ride and how to start on their phone. Existing members arrive for help, crew invitations or authentication. Success: explain the routing preference, find the appropriate installation path, or complete the intended support handoff. These are design hypotheses; browser tests and rendered review do not establish user-study or road-safety outcomes.
 
 Facts: public update manifest checked 2026-11-16 reports Android APK231 and internal TestFlight231; both public store channels are null. Main app has newer map/course UI than231. Billing remains off, ordinary presets3 and crews10. Do not advertise unreleased discovery controls as universally installed, guarantee legality/safety, invent testimonials/download counts, or present a synthetic route as a real calculation.
