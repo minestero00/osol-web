@@ -1,0 +1,71 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="/gl/maplibre-gl.css" />
+    <style>
+      html,
+      body,
+      #map {
+        margin: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+    <script src="/pmtiles.js"></script>
+    <script type="module">
+      import { Map, addProtocol, LngLatBounds } from "/gl/maplibre-gl.mjs";
+      const dark = new URLSearchParams(location.search).get("theme") === "dark";
+      addProtocol("pmtiles", new pmtiles.Protocol().tile);
+      const style = await (
+        await fetch(`style-${dark ? "dark" : "light"}.json`)
+      ).json();
+      const routes = await (await fetch("routes.json")).json();
+      const coords = routes.flatMap(
+        (r) => r.response.routes[0].geometry.coordinates,
+      );
+      const bounds = coords.reduce(
+        (b, c) => b.extend(c),
+        new LngLatBounds(coords[0], coords[0]),
+      );
+      const errors = [];
+      const map = new Map({
+        container: "map",
+        style,
+        interactive: false,
+        attributionControl: false,
+        canvasContextAttributes: { preserveDrawingBuffer: true },
+      });
+      map.on("error", (e) => errors.push(String(e.error)));
+      map.on("load", () => {
+        map.fitBounds(bounds, {
+          padding: { top: 80, bottom: 80, left: 150, right: 150 },
+          duration: 0,
+        });
+        map.once("idle", () => {
+          window.renderDetails = {
+            width: 1200,
+            height: 800,
+            zoom: map.getZoom(),
+            center: map.getCenter().toArray(),
+            bounds: map.getBounds().toArray(),
+            errors,
+            routes: routes.map((r) => ({
+              ...r,
+              id: r.id,
+              projected: r.response.routes[0].geometry.coordinates.map((c) => {
+                let p = map.project(c);
+                return [p.x, p.y];
+              }),
+            })),
+          };
+          window.renderReady = true;
+        });
+      });
+    </script>
+  </body>
+</html>

@@ -36,3 +36,20 @@ OSOL_MAP_WORKDIR=/absolute/task/evidence/real-map OSOL_APP_REPO=/absolute/Osol n
 ```
 
 Use `OSOL_CHROME_EXECUTABLE` for installed Chrome if needed. The generator only starts a loopback server and reads public map tiles/glyphs. It neither fetches a new route nor publishes assets. To change a route, retain the real API request/response, review the returned geometry and timing, regenerate both themes, update provenance hashes and re-review the render. Never substitute QA fixture geometry for a public route.
+
+## Interactive riding atlas
+
+The visual direction, type hierarchy, layout and component decisions are defined in `docs/ux-product-site.md` (2026-11-17 section); copy in `docs/web-copy.md`. Homepage-only styles live in `home.css`, interaction in `route-demo.js`; support/consent/bridge pages retain their shared layout.
+
+`assets/maps/comparison/source.json` retains two actual same-endpoint routing requests and responses. They are editorial preference examples, not factory presets or live calculations. `projection.json` registers unchanged coordinates to the basemap. `tools/check-site.py` verifies source hashes, Mercator projection, point count and the actual inline SVG path. The public page uses same-origin WebP and SVG only, with no runtime map SDK, routing call or location permission.
+
+To reproduce the comparison after `npm ci`, use the existing evidence run (Dart and `cwebp` required):
+
+```sh
+OSOL_MAP_WORKDIR=/absolute/existing/evidence/render OSOL_CHROME_EXECUTABLE='/Applications/Google Chrome.app/Contents/MacOS/Google Chrome' node tools/render-comparison.cjs
+python3 tools/update-comparison.py --render-dir /absolute/existing/evidence/render
+npx prettier --write index.html
+npm run check
+```
+
+The renderer exports the current sibling app style unchanged. If changing the app source/style or route examples, update provenance `app_source_commit`, copy and metrics and inspect both themes before publication. The update helper does not fetch routes or infer claims from weights. Numeric selection/summary coherence is checked against original API responses by browser tests. Keep all original evidence; do not overwrite earlier accepted render runs when changing inputs.

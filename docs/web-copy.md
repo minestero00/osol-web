@@ -35,3 +35,23 @@ The mailto template asks only for account identification and request details.
 | Unavailable page | 길을 찾지 못했어요 / 주소가 바뀌었거나 페이지가 없어요. / Osol 홈으로 |
 
 Copy is factual product guidance, not a promise of safety, current road legality, public-store approval or support fulfillment. Existing support identity and immutable legal versions are unchanged.
+
+## Interactive atlas · 2026-11-17
+
+| State / area | Copy and intended meaning |
+|---|---|
+| Hero | 같은 목적지. 다른 라이딩. / 가는 길에도 취향이 있으니까. 나에게 맞는 길을 고르고, 달린 길을 기록하고, 함께 나누세요. |
+| Real comparison | 부산 미포 → 일광해수욕장 / 오늘은 어떤 길로? / 취향을 눌러 길의 차이를 확인하세요. |
+| Balanced example | 균형 있게 / 경치·한적함·편안함을 고르게 / 14.8km·약17분. Actual14776.2m/1049.1s. |
+| Scenic example | 경치에 더 비중을 / 경치와 한적함의 비중을 높여서 / 16.8km·약20분. Actual16769.7m/1199.1s. |
+| Comparison | 균형 경로보다2.0km 더, 약3분 더. / 경치 예시보다2.0km 덜, 약3분 덜. Based on rounded differences1993.5m/150s. Preference names describe editorial examples, not factory defaults or measured scenic quality. |
+| Selection | 선택 / 선택됨 / 두 경로 겹쳐 보기 / 실선은 선택한 길, 점선은 다른 길이에요. |
+| Map | 부산의 동쪽, 바다를 따라 / 지도 크게 보기 / 지도 닫기. This is a fixed public example, not the visitor's live location or navigation. |
+| Provenance | 2026.11.17 실제 탐색 예시 · 현재 도로 상황과 다를 수 있어요. / 이 경로는 어떻게 골랐나요? Actual app style and exact route coordinates; same endpoints. |
+| Image failure | 지도를 불러오지 못했어요. 거리와 시간은 아래에서 비교할 수 있어요. / 지도 다시 불러오기 |
+| No JS | 경치에 비중을 둔 경로를 표시하고 있어요. JavaScript를 켜면 두 경로를 바꿔볼 수 있어요. |
+| Two purposes | 갈 곳이 있어도. 아직 없어도. / 목적지는 정했어요. / 달릴 곳부터 찾고 싶어요. Links lead to route demonstration and installation respectively, no simulated live discovery feed. |
+
+Same-day geocode lookup located 일광해수욕장 공영주차장 at35.2613889286804,129.233033843704; example routes use that roadside destination. Preference percentages are input weights, never safety or scenery guarantees. Map labels, metrics and comparisons are synchronized on selection; no real ride or crew event is created.
+
+Map inspection refinement: 지도 배율 / 지도 축소 / 지도 확대 / 확대해서 길의 차이를 살펴보세요. / 확대한 지도. 방향키 또는 스크롤로 이동할 수 있어요. / 닫기. The original ‘지도 크게 보기’ promise now means an actually larger registered map (mobile200%, desktop125%), not a smaller isolated image. Zoom percentage is announced; viewport is keyboard scrollable; no visitor location is requested.

@@ -1,0 +1,27 @@
+{
+  "app_source_commit": "bf106ddb0abd8ff7e9bb6451526c168a87d9b4ab",
+  "style_source": "app/lib/map/osol_map_style.dart",
+  "style_sha256": "0595096369c8e17862e653736511ab9b1a40d28ea0c1d2480bd67d308b4cd44c",
+  "renderer": "tools/render-comparison.cjs",
+  "geometry_modified": false,
+  "example": true,
+  "evidence": "/Users/riaco/.cache/osol/web-refresh-20261105/20261117-interactive/render",
+  "assets": [
+    {
+      "path": "assets/maps/comparison/source.json",
+      "sha256": "52190139f0de222ea562b072108ba05ae7803e7806d8602ad1790d6b88ba9b28"
+    },
+    {
+      "path": "assets/maps/comparison/projection.json",
+      "sha256": "febff0f5a4e531df7fa363f37c12d39e76f96300d672f94996a1b02446841cd9"
+    },
+    {
+      "path": "assets/maps/comparison/coast-light.webp",
+      "sha256": "142c0f150b872d2736a8bdef6f966a29adf8fa5f1a3f73e4518db094c0641f92"
+    },
+    {
+      "path": "assets/maps/comparison/coast-dark.webp",
+      "sha256": "d22ade27d48f54475029d27669e836bbe8bbeb65dd59894fc41d726261a8396f"
+    }
+  ]
+}
