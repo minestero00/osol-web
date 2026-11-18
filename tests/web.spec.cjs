@@ -132,8 +132,9 @@ test("real route cartography follows theme with reduced motion and contrast", as
   await page.goto("/");
   await expect(page.locator(".map-light")).toBeVisible();
   await expect(page.locator(".map-dark")).toBeHidden();
-  await expect(page.locator("#real-route-title")).toHaveText(
-    "부산 미포 → 송정",
+  await expect(page.locator("#atlas-map")).toHaveAttribute(
+    "aria-label",
+    /미포에서 일광까지/,
   );
   await page.locator(".theme-button").click();
   await page.locator("[data-theme-choice=dark]").click();
@@ -272,4 +273,261 @@ test("install links and nested 404 base", async ({ page }) => {
     await page.locator("link[rel=stylesheet]").evaluate((e) => e.href),
   ).toBe("http://127.0.0.1:8766/style.css");
   await expect(page.locator("h1:visible")).toBeVisible();
+});
+
+test("route preferences keep exact paths, metrics and selection in sync through rapid changes", async ({
+  page,
+}, info) => {
+  await page.goto("/");
+  const paths = await page
+    .locator("[data-path]")
+    .evaluateAll((nodes) =>
+      Object.fromEntries(
+        nodes.map((n) => [n.dataset.path, n.getAttribute("d")]),
+      ),
+    );
+  const source = JSON.parse(
+    fs.readFileSync(
+      path.join(__dirname, "../assets/maps/comparison/source.json"),
+    ),
+  );
+  for (const id of ["balanced", "scenic", "balanced", "scenic"]) {
+    await page.locator(`[data-route="${id}"]`).click();
+    await expect(page.locator(`[data-route="${id}"]`)).toHaveAttribute(
+      "aria-pressed",
+      "true",
+    );
+    await expect(page.locator(".route-line.selected")).toHaveAttribute(
+      "data-path",
+      id,
+    );
+    const actual = source.find((r) => r.id === id).response.routes[0];
+    await expect(page.locator("#atlas-map")).toHaveAttribute(
+      "aria-label",
+      new RegExp((actual.distance_m / 1000).toFixed(1) + "km"),
+    );
+    await expect(page.locator("#dialog-route-label")).toContainText(
+      "약 " + Math.round(actual.duration_s / 60) + "분",
+    );
+  }
+  expect(
+    await page
+      .locator("[data-path]")
+      .evaluateAll((nodes) =>
+        Object.fromEntries(
+          nodes.map((n) => [n.dataset.path, n.getAttribute("d")]),
+        ),
+      ),
+  ).toEqual(paths);
+  await page.locator("#compare-routes").check();
+  await expect(page.locator("#atlas-map")).toHaveAttribute("data-compare", "");
+  await expect(page.locator("#compare-legend")).toBeVisible();
+  await capture(page, "route-comparison-mobile", info);
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await capture(page, "route-comparison-desktop", info);
+});
+
+test("map enlargement contains keyboard focus, Escape restores selection and scroll state", async ({
+  page,
+}, info) => {
+  await page.goto("/");
+  await page.locator("[data-route=balanced]").click();
+  const inlineWidth = await page
+    .locator("#atlas-map")
+    .evaluate((e) => e.getBoundingClientRect().width);
+  await page.locator(".map-expand").click();
+  await expect(page.locator("#map-dialog")).toBeVisible();
+  expect(
+    await page
+      .locator("#atlas-map")
+      .evaluate((e) => e.getBoundingClientRect().width),
+  ).toBeGreaterThan(inlineWidth * 1.5);
+  await page.locator("#map-zoom-in").click();
+  await expect(page.locator("#map-zoom-level")).toHaveText("250%");
+  await page.locator("#map-zoom-out").click();
+  await expect(page.locator("#map-zoom-level")).toHaveText("200%");
+  await page.locator(".dialog-close").focus();
+  await expect(page.locator(".dialog-close")).toBeFocused();
+  await expect(page.locator("#dialog-map-host #atlas-map")).toHaveCount(1);
+  await expect(page.locator("#dialog-route-label")).toContainText("균형 있게");
+  expect(
+    await page.evaluate(() => document.documentElement.style.overflow),
+  ).toBe("hidden");
+  for (let i = 0; i < 5; i++) await page.keyboard.press("Tab");
+  expect(
+    await page.evaluate(() => !!document.activeElement.closest("#map-dialog")),
+  ).toBe(true);
+  await capture(page, "route-expanded", info);
+  await page.keyboard.press("Escape");
+  await expect(page.locator(".map-expand")).toBeFocused();
+  await expect(page.locator("#map-home #atlas-map")).toHaveCount(1);
+  await expect(page.locator(".route-line.selected")).toHaveAttribute(
+    "data-path",
+    "balanced",
+  );
+  expect(
+    await page.evaluate(() => document.documentElement.style.overflow),
+  ).toBe("");
+});
+
+test("map failure is distinct from a route result and retry recovers", async ({
+  page,
+}) => {
+  let fail = true;
+  await page.route("**/comparison/coast-light.webp*", (route) =>
+    fail ? route.abort() : route.continue(),
+  );
+  await page.emulateMedia({ colorScheme: "light" });
+  await page.goto("/");
+  await expect(page.locator(".map-error")).toBeVisible();
+  await page.locator("[data-route=balanced]").click();
+  await expect(page.locator("#route-difference")).toContainText("2.0km 덜");
+  fail = false;
+  await page.locator("#map-retry").click();
+  await expect(page.locator(".map-error")).toBeHidden();
+  await expect(page.locator(".map-expand")).toBeEnabled();
+  await expect(page.locator(".map-light")).toHaveJSProperty(
+    "naturalWidth",
+    1200,
+  );
+});
+
+test("keyboard comparison and reduced motion show final state without animation", async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/");
+  await page.locator("[data-route=balanced]").focus();
+  await page.keyboard.press("Enter");
+  await expect(page.locator("[data-route=balanced]")).toHaveAttribute(
+    "aria-pressed",
+    "true",
+  );
+  await page.keyboard.press("Tab");
+  await page.keyboard.press("Space");
+  await expect(page.locator("[data-route=scenic]")).toHaveAttribute(
+    "aria-pressed",
+    "true",
+  );
+  expect(
+    await page
+      .locator("#atlas-map")
+      .evaluate(
+        (e) =>
+          e
+            .getAnimations({ subtree: true })
+            .filter((a) => a.playState === "running").length,
+      ),
+  ).toBe(0);
+});
+
+test("enlarged map mouse drag tracks pointer and keyboard can move the viewport", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await page.locator(".map-expand").click();
+  const host = page.locator("#dialog-map-host");
+  const box = await host.boundingBox();
+  const before = await host.evaluate((e) => e.scrollLeft);
+  await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(box.x + box.width / 2 - 60, box.y + box.height / 2);
+  await page.mouse.up();
+  expect(await host.evaluate((e) => e.scrollLeft)).toBeGreaterThan(before + 40);
+  await host.focus();
+  await page.keyboard.press("ArrowLeft");
+  await expect
+    .poll(() => host.evaluate((e) => e.scrollLeft))
+    .toBeLessThan(before + 60);
+  await page.keyboard.press("Escape");
+  await expect(page.locator("#atlas-map")).not.toHaveAttribute(
+    "style",
+    /width/,
+  );
+});
+
+test("journey choices support keyboard, rapid switching and no network side effects", async ({
+  page,
+}) => {
+  await page.goto("/");
+  const requests = [];
+  page.on("request", (r) => {
+    if (
+      ["fetch", "xhr"].includes(r.resourceType()) ||
+      !r.url().startsWith("http://127.0.0.1:8766/")
+    )
+      requests.push(r.url());
+  });
+  const first = page.getByRole("tab", { name: "목적지가 있어요" });
+  await first.focus();
+  await page.keyboard.press("ArrowRight");
+  await expect(
+    page.getByRole("tab", { name: "코스부터 찾을래요" }),
+  ).toBeFocused();
+  await expect(page.locator("#discover-panel")).toBeVisible();
+  await expect(page.locator("#destination-panel")).toBeHidden();
+  await page.keyboard.press("Home");
+  await expect(first).toBeFocused();
+  await expect(page.locator("#destination-panel")).toBeVisible();
+  for (let i = 0; i < 4; i++) {
+    await page.getByRole("tab", { name: "위치 공유", exact: true }).click();
+    await page.getByRole("tab", { name: "음성 연결", exact: true }).click();
+  }
+  await expect(page.locator("#crew-voice-panel")).toBeVisible();
+  await expect(page.locator("#crew-location-panel")).toBeHidden();
+  await page.keyboard.press("Home");
+  await expect(
+    page.getByRole("tab", { name: "같은 경로", exact: true }),
+  ).toBeFocused();
+  await expect(page.locator("#crew-route-panel")).toBeVisible();
+  expect(requests).toEqual([]);
+  const result = await new AxeBuilder({ page })
+    .withTags(["wcag2a", "wcag2aa", "wcag21aa"])
+    .analyze();
+  expect(result.violations).toEqual([]);
+});
+
+test("chapter anchors and reduced motion preserve final content and focus", async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/");
+  await page.getByRole("button", { name: "메뉴 열기" }).click();
+  await page.locator('a[data-chapter][href="#ride"]').click();
+  await expect(page).toHaveURL(/#ride$/);
+  await expect(page.locator('a[data-chapter][href="#ride"]')).toHaveAttribute(
+    "aria-current",
+    "location",
+  );
+  await page.getByRole("tab", { name: "코스부터 찾을래요" }).click();
+  await expect(page.locator("#discover-panel")).toBeVisible();
+  expect(
+    await page
+      .locator("#discover-panel")
+      .evaluate((el) => el.getAnimations().length),
+  ).toBe(0);
+  await page.locator('a[data-chapter][href="#start"]').click();
+  await expect(page.locator('a[data-chapter][href="#start"]')).toHaveAttribute(
+    "aria-current",
+    "location",
+  );
+});
+
+test("journey explanations remain complete without JavaScript", async ({
+  browser,
+}) => {
+  const context = await browser.newContext({ javaScriptEnabled: false });
+  const page = await context.newPage();
+  await page.goto("http://127.0.0.1:8766/");
+  for (const id of [
+    "destination-panel",
+    "discover-panel",
+    "crew-route-panel",
+    "crew-location-panel",
+    "crew-voice-panel",
+  ]) {
+    await expect(page.locator(`#${id}`)).toBeVisible();
+  }
+  await expect(page.locator(".story-tabs:visible")).toHaveCount(0);
+  await context.close();
 });
