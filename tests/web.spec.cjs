@@ -130,16 +130,16 @@ test("real route cartography follows theme with reduced motion and contrast", as
     colorScheme: "light",
   });
   await page.goto("/");
-  await expect(page.locator(".map-light")).toBeVisible();
-  await expect(page.locator(".map-dark")).toBeHidden();
+  await expect(page.locator("#atlas-map .map-light")).toBeVisible();
+  await expect(page.locator("#atlas-map .map-dark")).toBeHidden();
   await expect(page.locator("#atlas-map")).toHaveAttribute(
     "aria-label",
     /미포에서 일광까지/,
   );
   await page.locator(".theme-button").click();
   await page.locator("[data-theme-choice=dark]").click();
-  await expect(page.locator(".map-dark")).toBeVisible();
-  await expect(page.locator(".map-light")).toBeHidden();
+  await expect(page.locator("#atlas-map .map-dark")).toBeVisible();
+  await expect(page.locator("#atlas-map .map-light")).toBeHidden();
   await expect(page.locator("#app-screen")).toHaveAttribute(
     "src",
     "assets/screens/crew.png",
@@ -297,10 +297,9 @@ test("route preferences keep exact paths, metrics and selection in sync through 
       "aria-pressed",
       "true",
     );
-    await expect(page.locator(".route-line.selected")).toHaveAttribute(
-      "data-path",
-      id,
-    );
+    await expect(
+      page.locator("#atlas-map .route-line.selected"),
+    ).toHaveAttribute("data-path", id);
     const actual = source.find((r) => r.id === id).response.routes[0];
     await expect(page.locator("#atlas-map")).toHaveAttribute(
       "aria-label",
@@ -361,7 +360,7 @@ test("map enlargement contains keyboard focus, Escape restores selection and scr
   await page.keyboard.press("Escape");
   await expect(page.locator(".map-expand")).toBeFocused();
   await expect(page.locator("#map-home #atlas-map")).toHaveCount(1);
-  await expect(page.locator(".route-line.selected")).toHaveAttribute(
+  await expect(page.locator("#atlas-map .route-line.selected")).toHaveAttribute(
     "data-path",
     "balanced",
   );
@@ -386,7 +385,7 @@ test("map failure is distinct from a route result and retry recovers", async ({
   await page.locator("#map-retry").click();
   await expect(page.locator(".map-error")).toBeHidden();
   await expect(page.locator(".map-expand")).toBeEnabled();
-  await expect(page.locator(".map-light")).toHaveJSProperty(
+  await expect(page.locator("#atlas-map .map-light")).toHaveJSProperty(
     "naturalWidth",
     1200,
   );
