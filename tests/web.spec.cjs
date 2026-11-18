@@ -130,16 +130,16 @@ test("real route cartography follows theme with reduced motion and contrast", as
     colorScheme: "light",
   });
   await page.goto("/");
-  await expect(page.locator(".map-light")).toBeVisible();
-  await expect(page.locator(".map-dark")).toBeHidden();
+  await expect(page.locator("#atlas-map .map-light")).toBeVisible();
+  await expect(page.locator("#atlas-map .map-dark")).toBeHidden();
   await expect(page.locator("#atlas-map")).toHaveAttribute(
     "aria-label",
     /미포에서 일광까지/,
   );
   await page.locator(".theme-button").click();
   await page.locator("[data-theme-choice=dark]").click();
-  await expect(page.locator(".map-dark")).toBeVisible();
-  await expect(page.locator(".map-light")).toBeHidden();
+  await expect(page.locator("#atlas-map .map-dark")).toBeVisible();
+  await expect(page.locator("#atlas-map .map-light")).toBeHidden();
   await expect(page.locator("#app-screen")).toHaveAttribute(
     "src",
     "assets/screens/crew.png",
@@ -297,10 +297,9 @@ test("route preferences keep exact paths, metrics and selection in sync through 
       "aria-pressed",
       "true",
     );
-    await expect(page.locator(".route-line.selected")).toHaveAttribute(
-      "data-path",
-      id,
-    );
+    await expect(
+      page.locator("#atlas-map .route-line.selected"),
+    ).toHaveAttribute("data-path", id);
     const actual = source.find((r) => r.id === id).response.routes[0];
     await expect(page.locator("#atlas-map")).toHaveAttribute(
       "aria-label",
@@ -361,7 +360,7 @@ test("map enlargement contains keyboard focus, Escape restores selection and scr
   await page.keyboard.press("Escape");
   await expect(page.locator(".map-expand")).toBeFocused();
   await expect(page.locator("#map-home #atlas-map")).toHaveCount(1);
-  await expect(page.locator(".route-line.selected")).toHaveAttribute(
+  await expect(page.locator("#atlas-map .route-line.selected")).toHaveAttribute(
     "data-path",
     "balanced",
   );
@@ -386,7 +385,7 @@ test("map failure is distinct from a route result and retry recovers", async ({
   await page.locator("#map-retry").click();
   await expect(page.locator(".map-error")).toBeHidden();
   await expect(page.locator(".map-expand")).toBeEnabled();
-  await expect(page.locator(".map-light")).toHaveJSProperty(
+  await expect(page.locator("#atlas-map .map-light")).toHaveJSProperty(
     "naturalWidth",
     1200,
   );
@@ -530,4 +529,87 @@ test("journey explanations remain complete without JavaScript", async ({
   }
   await expect(page.locator(".story-tabs:visible")).toHaveCount(0);
   await context.close();
+});
+
+test("cinematic prototype keeps geometry, native scroll and reduced-motion final state", async ({
+  page,
+}) => {
+  await page.goto("/cinematic.html");
+  for (const width of [320, 375, 768, 1440]) {
+    await page.setViewportSize({ width, height: 900 });
+    expect(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth <= innerWidth,
+      ),
+    ).toBe(true);
+  }
+  const film = page.locator(".film");
+  await page.evaluate(() => {
+    const f = document.querySelector(".film");
+    scrollTo({
+      top:
+        f.getBoundingClientRect().top + scrollY + f.offsetHeight - innerHeight,
+      behavior: "instant",
+    });
+  });
+  await expect(page.locator("[data-film-phase]")).toHaveText(
+    "내 방식으로 준비하고 · 앱 UI 재구성",
+  );
+  await page.locator('[data-film-route="balanced"]').click();
+  await expect(page.locator(".film-app-summary strong")).toContainText("14.8");
+  await expect(
+    page.locator('#route-experience [data-route="balanced"]'),
+  ).toHaveAttribute("aria-pressed", "true");
+  for (const id of ["balanced", "scenic"]) {
+    const paths = page.locator(`[data-path="${id}"]`);
+    expect(await paths.nth(0).getAttribute("d")).toBe(
+      await paths.nth(1).getAttribute("d"),
+    );
+  }
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await expect(film).toHaveCSS("height", "900px");
+  await page.locator(".film-skip").click();
+  await expect(page).toHaveURL(/#route-experience$/);
+  await page.locator('[data-route="balanced"]').click();
+  await expect(page.locator('[data-route="balanced"]')).toHaveAttribute(
+    "aria-pressed",
+    "true",
+  );
+  const result = await new AxeBuilder({ page })
+    .withTags(["wcag2a", "wcag2aa", "wcag21aa"])
+    .analyze();
+  expect(result.violations).toEqual([]);
+});
+
+test("departure ending keeps device actions accessible in both layouts", async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  for (const url of ["/index.html", "/cinematic.html"]) {
+    await page.goto(url);
+    for (const width of [320, 375, 768, 1440]) {
+      await page.setViewportSize({ width, height: 900 });
+      await page.locator("#start").scrollIntoViewIfNeeded();
+      expect(
+        await page.evaluate(
+          () => document.documentElement.scrollWidth <= innerWidth,
+        ),
+      ).toBe(true);
+      for (const platform of ["android", "ios"]) {
+        const link = page.locator(
+          `.departure a[href="download.html#${platform}"]`,
+        );
+        await expect(link).toBeVisible();
+        expect((await link.boundingBox()).height).toBeGreaterThanOrEqual(44);
+      }
+    }
+    const result = await new AxeBuilder({ page })
+      .include("#start")
+      .withTags(["wcag2a", "wcag2aa", "wcag21aa"])
+      .analyze();
+    expect(result.violations).toEqual([]);
+    await page.locator('.departure a[href="download.html#ios"]').focus();
+    await page.keyboard.press("Enter");
+    await expect(page).toHaveURL(/download.html#ios$/);
+  }
 });
