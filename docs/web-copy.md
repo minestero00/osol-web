@@ -55,3 +55,10 @@ Copy is factual product guidance, not a promise of safety, current road legality
 Same-day geocode lookup located 일광해수욕장 공영주차장 at35.2613889286804,129.233033843704; example routes use that roadside destination. Preference percentages are input weights, never safety or scenery guarantees. Map labels, metrics and comparisons are synchronized on selection; no real ride or crew event is created.
 
 Map inspection refinement: 지도 배율 / 지도 축소 / 지도 확대 / 확대해서 길의 차이를 살펴보세요. / 확대한 지도. 방향키 또는 스크롤로 이동할 수 있어요. / 닫기. The original ‘지도 크게 보기’ promise now means an actually larger registered map (mobile200%, desktop125%), not a smaller isolated image. Zoom percentage is announced; viewport is keyboard scrollable; no visitor location is requested.
+
+## Interactive completion · 2026-11-18
+
+- Chapter links: 길 고르기 / 출발 준비 / 기록과 크루 / 설치.
+- Start choices: 목적지가 있어요 / 코스부터 찾을래요. Their three steps describe the app workflow, never perform a calculation or location request on this site.
+- Crew explanations: 같은 경로 / 위치 공유 / 음성 연결. These controls explain capabilities; they never toggle a real sharing session.
+- Map disclosure: 앱2.0 개발 중인 지도 스타일로 표현한 실제 경로 예시입니다. Routing response date stays2026.11.17. Pending POI functionality is not advertised as released.

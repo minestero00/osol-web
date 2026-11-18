@@ -1,5 +1,19 @@
 # Osol product site · 2026-11-16
 
+## 2026-11-17: Osol 2.0 앱·웹 공동 재설계 계획
+
+사용자는 레퍼런스 사이트의 감정과 세부 디자인을 앱에서도 느끼게 하도록 앱 자체의 대규모 재설계를 요청했고,
+목표 앱 버전을 **2.0.0**으로 정했다. 앱의 현재 디자인에 웹을 맞추는 범위를 넘어 앱/웹의 정보 구조·타입·재질·모션을 함께 검토한다.
+실행 계획 정본은 Osol 저장소의 [`docs/exec-plans/active/osol-2-design.md`](https://github.com/minestero00/Osol/blob/main/docs/exec-plans/active/osol-2-design.md)이며,
+현재 로컬 계획 초안 단계여서 원격 링크는 계획이 반영된 뒤 유효하다. 로컬 위치는 `../Osol/docs/exec-plans/active/osol-2-design.md`(웹 저장소 루트 기준)다.
+
+아래 map-first 히어로는 이전 구현 이력이다. PR8의 실제 지도/경로 비교·출처·접근성·오류 복구는 재사용 후보로 유지하고,
+앱 핵심6장과 웹 첫 화면의 두 방향 시안을 비교한 뒤 새 페이지 구성을 확정한다.
+제안 흐름은 실제 라이딩 풍경+앱 → 목적지/코스 두 상황 → 경로 비교 → 기록/크루 → 설치다.
+앱·웹 공통 색 역할/타입 성격/재질/모션을 정의하되 화면 크기와 사용 맥락에 맞는 별도 위계를 둔다.
+사진과 앱 캡처는 실제 장소·경로·출시 기능에 대응해야 한다. 합성 QA 코스를 홍보용 실경로로 사용하지 않는다.
+이번 변경은 계획 문서만이며,2.0 디자인/기능/빌드/공개 배포가 완료됐다는 뜻이 아니다.
+
 Owner Codex; branch `feat/product-site-refresh`, base main313c25c; existing primary checkout, no extra worktree. Evidence: `~/.cache/osol/web-refresh-20261105/20261116/`. Remove owned preview process and project-specific generated caches at closure; retain source and QA evidence.
 
 ## Context and decisions
@@ -64,3 +78,20 @@ Validation task: “부산에서 이 구간을 달리려 합니다. 두 가지 �
 Implementation refinement: selected real segment is 부산 미포 → 일광해수욕장 roadside parking (same destination coordinates for both requests). Balanced14776.2m/1049.1s versus scenic-weighted16769.7m/1199.1s; the visible mid-route detour is actual geometry. Source `assets/maps/comparison/source.json`; registration and hashes `docs/comparison-provenance.json`. No scenery ranking is inferred from the route's name.
 
 The enlarged map opens at200% on mobile and125% on desktop, with100–300% controls. Touch uses native two-axis scrolling; mouse uses Pointer Events/capture,1:1 scroll tracking and capped24px edge resistance with350ms release. Keyboard users focus the labelled scroll region and use arrow keys. Geometry/image share one transform. Closing restores the inline map, exact selection and launch-button focus. Reduced motion cancels ongoing route/release animations. Native image failure shows retry without hiding known distance/time. Desktop and mobile use the same registered map; mobile moves choices before it, rather than shrinking a desktop sidebar.
+
+## Interactive completion · 2026-11-18
+
+Continue existing PR8 (`feat/interactive-route-story`), owner Codex, same checkout. Preserve the preceding joint-design notes. Evidence stays under `~/.cache/osol/web-refresh-20261105/20261117-interactive/final-20261118/`. No production merge in this task.
+
+Visitor task: understand the difference between route choices, find a start appropriate to whether they know their destination, understand optional crew sharing, and reach the right installation channel. This is a design hypothesis, not observed user research.
+
+Keep the riding-atlas direction: neutral mist/slate, cobalt for chosen actions, pine for a scenic context; system Korean type at17px body, generous editorial headings, full-width factual cartography. Alternate the dense route comparison with an open two-purpose section and a darker crew surface. Glass is restricted to navigation. Preserve real route geometry; regenerate the comparison from current app style62b61f1 and disclose the development style. Never market pending POI features as installed.
+
+| Element | Task / needed information → expression | States and validation |
+|---|---|---|
+| Chapter navigation | Know where I am / jump to a purpose → four labelled anchors with current chapter and a discreet reading progress line | Scroll/resize/hash/keyboard; no scroll interception, no focus changes on scroll; compact layout320px |
+| Start selector | Decide how to begin → destination/course choices reveal the corresponding actual three-step workflow and link | Semantic tabs only after enhancement; keyboard arrows/Home/End, fast switching, all content visible with no JS |
+| Crew explanation | Understand optional sharing before installing → select route/location/voice concepts to reveal what each does | Explanatory tabs, never pretend to activate a real crew, location or microphone; no permission request; no-JS shows all explanations |
+| Section arrival | Follow the reading hierarchy → one short12px arrival with full text opacity on meaningful groups | Content never hidden waiting for JS; offscreen observer, reduced-motion bypass and cancel; no autoplay/scroll-jacking |
+
+The same comparison, route zoom/drag, failure recovery and selected metrics remain. Support, legal, auth and install routes retain their existing contracts. Final verification includes both browser engines, all page accessibility/regression checks, a focused new interaction suite and independent rendered review. Physical Safari/Chrome and actual user comprehension remain unverified.

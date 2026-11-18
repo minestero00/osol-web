@@ -2,9 +2,9 @@
   "name": "osol-web",
   "private": true,
   "scripts": {
-    "check": "python3 tools/check-site.py && node --check site.js && node --check theme.js && node --check route-demo.js",
+    "check": "python3 tools/check-site.py && node --check site.js && node --check theme.js && node --check route-demo.js && node --check journey.js",
     "test": "playwright test",
-    "format:check": "prettier --check '*.html' style.css home.css site.js route-demo.js theme.js tests/*.cjs playwright.config.cjs"
+    "format:check": "prettier --check '*.html' style.css home.css site.js route-demo.js journey.js theme.js tests/*.cjs playwright.config.cjs"
   },
   "devDependencies": {
     "@axe-core/playwright": "4.14.0",

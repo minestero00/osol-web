@@ -445,3 +445,89 @@ test("enlarged map mouse drag tracks pointer and keyboard can move the viewport"
     /width/,
   );
 });
+
+test("journey choices support keyboard, rapid switching and no network side effects", async ({
+  page,
+}) => {
+  await page.goto("/");
+  const requests = [];
+  page.on("request", (r) => {
+    if (
+      ["fetch", "xhr"].includes(r.resourceType()) ||
+      !r.url().startsWith("http://127.0.0.1:8766/")
+    )
+      requests.push(r.url());
+  });
+  const first = page.getByRole("tab", { name: "목적지가 있어요" });
+  await first.focus();
+  await page.keyboard.press("ArrowRight");
+  await expect(
+    page.getByRole("tab", { name: "코스부터 찾을래요" }),
+  ).toBeFocused();
+  await expect(page.locator("#discover-panel")).toBeVisible();
+  await expect(page.locator("#destination-panel")).toBeHidden();
+  await page.keyboard.press("Home");
+  await expect(first).toBeFocused();
+  await expect(page.locator("#destination-panel")).toBeVisible();
+  for (let i = 0; i < 4; i++) {
+    await page.getByRole("tab", { name: "위치 공유", exact: true }).click();
+    await page.getByRole("tab", { name: "음성 연결", exact: true }).click();
+  }
+  await expect(page.locator("#crew-voice-panel")).toBeVisible();
+  await expect(page.locator("#crew-location-panel")).toBeHidden();
+  await page.keyboard.press("Home");
+  await expect(
+    page.getByRole("tab", { name: "같은 경로", exact: true }),
+  ).toBeFocused();
+  await expect(page.locator("#crew-route-panel")).toBeVisible();
+  expect(requests).toEqual([]);
+  const result = await new AxeBuilder({ page })
+    .withTags(["wcag2a", "wcag2aa", "wcag21aa"])
+    .analyze();
+  expect(result.violations).toEqual([]);
+});
+
+test("chapter anchors and reduced motion preserve final content and focus", async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/");
+  await page.getByRole("button", { name: "메뉴 열기" }).click();
+  await page.locator('a[data-chapter][href="#ride"]').click();
+  await expect(page).toHaveURL(/#ride$/);
+  await expect(page.locator('a[data-chapter][href="#ride"]')).toHaveAttribute(
+    "aria-current",
+    "location",
+  );
+  await page.getByRole("tab", { name: "코스부터 찾을래요" }).click();
+  await expect(page.locator("#discover-panel")).toBeVisible();
+  expect(
+    await page
+      .locator("#discover-panel")
+      .evaluate((el) => el.getAnimations().length),
+  ).toBe(0);
+  await page.locator('a[data-chapter][href="#start"]').click();
+  await expect(page.locator('a[data-chapter][href="#start"]')).toHaveAttribute(
+    "aria-current",
+    "location",
+  );
+});
+
+test("journey explanations remain complete without JavaScript", async ({
+  browser,
+}) => {
+  const context = await browser.newContext({ javaScriptEnabled: false });
+  const page = await context.newPage();
+  await page.goto("http://127.0.0.1:8766/");
+  for (const id of [
+    "destination-panel",
+    "discover-panel",
+    "crew-route-panel",
+    "crew-location-panel",
+    "crew-voice-panel",
+  ]) {
+    await expect(page.locator(`#${id}`)).toBeVisible();
+  }
+  await expect(page.locator(".story-tabs:visible")).toHaveCount(0);
+  await context.close();
+});

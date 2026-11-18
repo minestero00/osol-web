@@ -31,3 +31,7 @@
 현재 개인정보/약관과 PR5의 실제 구현 불일치는 [사실 대조](release-audit-2026-11-16.md)에 구체적으로 남겼다. 제공자 실제 계약·처리 국가·보관 절차와 정책 공고/시행일은 별도 운영자 검토 대상이다. 새 동의 버전·스토어 출시·앱 빌드 배포·실기기 외부 연동·실주행·사용자 과업 연구를 이 QA로 통과했다고 주장하지 않는다.
 
 `main` 병합은 공개 배포이므로 이번 결과는 draft PR로 제출한다. 소스·검증 증거를 보관하고 소유한 localhost서버를 종료했다. 1차 임시 의존성·npmcache·브라우저 다운로드439,091,200bytes(약419MiB)를 회수했다. 이후 실제 지도 수정에 필요한 의존성을 다시 만들었으며 최종 정리 영수증은 `real-map/cleanup.json`이다. 파일 할당량 기준이며 APFS 여유공간 증가량과 같다는 뜻은 아니다. `cleanup.json`에 소유 경로와 재설치 방법을 기록했다. workspace-audit의 보조 체크아웃0을 확인했다.
+
+## 2026-11-18 follow-up
+
+Interactive completion evidence and limitations are in `docs/reviews/2026-11-17-interactive-atlas.md`, final run `~/.cache/osol/web-refresh-20261105/20261117-interactive/final-20261118/`. Scope now includes purpose/crew tabs, keyboard arrows/Home/End, fast selection, current chapter, reduced motion and complete no-JS explanations. Cartography uses app62b61f1 with retained real route geometry. Public release remains beta232; no merge/deployment is implied.

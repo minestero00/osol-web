@@ -8,10 +8,10 @@ Use the existing checkout and branch from current `main`. Read `docs/ux-product-
 
 ```sh
 npm ci
-npx playwright install chromium webkit
+PLAYWRIGHT_SKIP_BROWSER_GC=1 PLAYWRIGHT_BROWSERS_PATH=/absolute/task/evidence/browsers npx playwright install chromium webkit
 npm run check
 npm run format:check
-npm test
+PLAYWRIGHT_BROWSERS_PATH=/absolute/task/evidence/browsers npm test
 python3 tools/check-release.py
 ```
 
@@ -53,3 +53,9 @@ npm run check
 ```
 
 The renderer exports the current sibling app style unchanged. If changing the app source/style or route examples, update provenance `app_source_commit`, copy and metrics and inspect both themes before publication. The update helper does not fetch routes or infer claims from weights. Numeric selection/summary coherence is checked against original API responses by browser tests. Keep all original evidence; do not overwrite earlier accepted render runs when changing inputs.
+
+## Product journey interactions
+
+`journey.js` enhances the existing homepage with purpose and crew-explanation tabs, current-section navigation and short section arrival motion. The header stays a single navigation surface. No-JS keeps every explanation visible. Tabs explain the app; they never request location/microphone or activate a real session. Honor reduced motion even when the preference changes during a transition.
+
+Always install test browsers into the existing evidence run using `PLAYWRIGHT_BROWSERS_PATH` and `PLAYWRIGHT_SKIP_BROWSER_GC=1`. The default Playwright installer may garbage-collect unrelated browser revisions in the shared cache. Use the same isolated path for test execution; remove only that owned directory at closure.

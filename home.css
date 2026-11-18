@@ -839,3 +839,205 @@
     animation: none !important;
   }
 }
+
+/* Editorial chapters: useful interaction, with the document always readable. */
+.atlas-page .nav-shell {
+  position: relative;
+}
+.atlas-page .nav-links a[aria-current] {
+  color: var(--route-link);
+  font-weight: 700;
+}
+.chapter-progress {
+  position: absolute;
+  height: 2px;
+  background: var(--route);
+  bottom: -1px;
+  inset-inline: 2rem;
+  transform: scaleX(0);
+  transform-origin: left;
+}
+.entry-options {
+  gap: 1.5rem;
+}
+.story-tabs {
+  display: flex;
+  gap: 0.25rem;
+  background: var(--paper-3);
+  border-radius: 1rem;
+  padding: 0.3rem;
+}
+.story-tabs button {
+  flex: 1;
+  min-height: 3rem;
+  padding: 0.65rem 0.8rem;
+  border: 0;
+  border-radius: 0.75rem;
+  background: transparent;
+  color: var(--ink-2);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  transition:
+    background 0.35s var(--spring),
+    color 0.2s;
+}
+.story-tabs button:hover {
+  background: color-mix(in oklch, var(--ink) 6%, transparent);
+}
+.story-tabs button[aria-selected="true"] {
+  background: var(--surface);
+  color: var(--route-link);
+  box-shadow: var(--elevation);
+}
+[data-switch-panel]:focus-visible {
+  outline: 0.18rem solid var(--route);
+  outline-offset: 0.5rem;
+  border-radius: 0.5rem;
+}
+.entry-options article + article {
+  border: 0;
+  padding: 0;
+}
+.entry-options [role="tabpanel"] {
+  min-height: 27rem;
+}
+.journey-kicker {
+  font-size: 0.875rem;
+  margin-bottom: 1rem;
+}
+.entry-options h3 {
+  font-size: clamp(1.75rem, 2.7vw, 2.5rem);
+  line-height: 1.3;
+}
+.journey-steps {
+  list-style: none;
+  padding: 0;
+  margin: 1.8rem 0;
+}
+.journey-steps li {
+  position: relative;
+  padding: 0 0 1.25rem 1.5rem;
+  margin: 0;
+}
+.journey-steps li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.65rem;
+  width: 0.4rem;
+  height: 0.4rem;
+  border-radius: 50%;
+  background: var(--route);
+}
+.journey-steps li:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  left: 0.17rem;
+  top: 1.25rem;
+  bottom: 0;
+  width: 1px;
+  background: var(--hair);
+}
+.journey-steps strong {
+  display: block;
+  font-size: 1rem;
+}
+.journey-steps span {
+  display: block;
+  color: var(--ink-2);
+  font-size: 0.9375rem;
+  margin-top: 0.25rem;
+}
+.atlas-page .story-panel.crew-story {
+  --surface: oklch(26% 0.03 259);
+  --paper-3: oklch(18% 0.025 259);
+  --ink: oklch(96% 0.01 256);
+  --ink-2: oklch(82% 0.025 256);
+  --route-link: oklch(85% 0.08 269);
+  --route: oklch(78% 0.1 269);
+  background: oklch(21% 0.03 259);
+  color: var(--ink);
+  padding: 2.5rem;
+}
+.crew-story > p,
+.crew-story .crew-explainer p {
+  color: var(--ink-2);
+}
+.crew-explainer {
+  margin-block: 2rem;
+}
+.crew-tabs {
+  margin-bottom: 1.5rem;
+}
+.crew-tabs button {
+  font-size: 0.875rem;
+  padding-inline: 0.4rem;
+}
+.crew-explainer [role="tabpanel"] {
+  min-height: 13.5rem;
+}
+.crew-explainer h4 {
+  margin: 1rem 0 0.5rem;
+  font-size: 1.25rem;
+  letter-spacing: -0.02em;
+}
+.crew-explainer p {
+  font-size: 0.9375rem;
+  margin-bottom: 0;
+}
+.crew-feature-mark {
+  display: flex;
+  align-items: center;
+  width: 3.25rem;
+  height: 3.25rem;
+  color: var(--route);
+}
+.crew-feature-mark svg {
+  width: 2.75rem;
+  height: 2.75rem;
+}
+.map-style-note {
+  font-size: 0.8125rem;
+  color: var(--ink-3);
+  margin-top: 0.75rem;
+}
+@media (min-width: 1051px) {
+  .entry-intro {
+    position: sticky;
+    top: 8rem;
+  }
+  .entry-section {
+    gap: 7rem;
+    padding-block: 6rem;
+  }
+}
+@media (max-width: 540px) {
+  .story-tabs button {
+    font-size: 0.875rem;
+    padding-inline: 0.5rem;
+  }
+  .entry-options [role="tabpanel"] {
+    min-height: 28rem;
+  }
+  .atlas-page .story-panel.crew-story {
+    padding: 1.5rem;
+  }
+  .crew-explainer [role="tabpanel"] {
+    min-height: 12.5rem;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .story-tabs button,
+  [data-switch-panel] {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+@media (forced-colors: active) {
+  .story-tabs button {
+    outline: 1px solid ButtonText;
+  }
+  .story-tabs button[aria-selected="true"] {
+    outline: 3px solid Highlight;
+  }
+}
