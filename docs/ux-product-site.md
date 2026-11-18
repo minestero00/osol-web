@@ -95,3 +95,9 @@ Keep the riding-atlas direction: neutral mist/slate, cobalt for chosen actions, 
 | Section arrival | Follow the reading hierarchy → one short12px arrival with full text opacity on meaningful groups | Content never hidden waiting for JS; offscreen observer, reduced-motion bypass and cancel; no autoplay/scroll-jacking |
 
 The same comparison, route zoom/drag, failure recovery and selected metrics remain. Support, legal, auth and install routes retain their existing contracts. Final verification includes both browser engines, all page accessibility/regression checks, a focused new interaction suite and independent rendered review. Physical Safari/Chrome and actual user comprehension remain unverified.
+
+## Cinematic prototype · 2026-11-18
+
+User approved a first-three-scene prototype after reference discussion. Branch feat/cinematic-atlas-prototype, same checkout, evidence existing web-refresh root/20261118-cinematic. Prototype cinematic.html only; public homepage remains the comparison. Task: feel the riding context, understand that this map becomes an app workflow, then choose between real routes. Assumption: spatial continuity improves comprehension; no user study yet.
+
+Scene1: large authentic map and short headline. Scene2: same registered map scales into a UI reconstruction with real endpoint/distance/time; caption explicitly says reconstruction, not native screenshot. Scene3: existing real-route comparison with exact unchanged geometry, buttons, zoom, attribution and error recovery. Scroll uses native progress, never intercepts wheel/touch or changes focus. One sticky section only. Map and SVG share3:2 geometry. No terrain or invented roads. Reduced motion/no-JS show a static complete composition and direct comparison link. Validate320/375/768/1440, two themes, keyboard/skip, reduced motion, source coordinate consistency, browser regression and fresh rendered review. Not production deployment approval.

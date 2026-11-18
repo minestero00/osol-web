@@ -531,3 +531,53 @@ test("journey explanations remain complete without JavaScript", async ({
   await expect(page.locator(".story-tabs:visible")).toHaveCount(0);
   await context.close();
 });
+
+test("cinematic prototype keeps geometry, native scroll and reduced-motion final state", async ({
+  page,
+}) => {
+  await page.goto("/cinematic.html");
+  for (const width of [320, 375, 768, 1440]) {
+    await page.setViewportSize({ width, height: 900 });
+    expect(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth <= innerWidth,
+      ),
+    ).toBe(true);
+  }
+  const film = page.locator(".film");
+  await page.evaluate(() => {
+    const f = document.querySelector(".film");
+    scrollTo({
+      top:
+        f.getBoundingClientRect().top + scrollY + f.offsetHeight - innerHeight,
+      behavior: "instant",
+    });
+  });
+  await expect(page.locator("[data-film-phase]")).toHaveText(
+    "내 방식으로 준비하고 · 앱 UI 재구성",
+  );
+  await page.locator('[data-film-route="balanced"]').click();
+  await expect(page.locator(".film-app-summary strong")).toContainText("14.8");
+  await expect(
+    page.locator('#route-experience [data-route="balanced"]'),
+  ).toHaveAttribute("aria-pressed", "true");
+  for (const id of ["balanced", "scenic"]) {
+    const paths = page.locator(`[data-path="${id}"]`);
+    expect(await paths.nth(0).getAttribute("d")).toBe(
+      await paths.nth(1).getAttribute("d"),
+    );
+  }
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await expect(film).toHaveCSS("height", "900px");
+  await page.locator(".film-skip").click();
+  await expect(page).toHaveURL(/#route-experience$/);
+  await page.locator('[data-route="balanced"]').click();
+  await expect(page.locator('[data-route="balanced"]')).toHaveAttribute(
+    "aria-pressed",
+    "true",
+  );
+  const result = await new AxeBuilder({ page })
+    .withTags(["wcag2a", "wcag2aa", "wcag21aa"])
+    .analyze();
+  expect(result.violations).toEqual([]);
+});
