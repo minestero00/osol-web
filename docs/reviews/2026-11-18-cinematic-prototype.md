@@ -11,3 +11,9 @@ Fresh `/root/cinematic_review` inspected8 actual375/1440 light/dark endpoint ren
 Evidence `~/.cache/osol/web-refresh-20261105/20261118-cinematic/`. Initial run76 passes/2 failures due stale expected phase copy while implementing the disclosure; preserved logs. Final results recorded below. Both repositories had no active Actions at quota inspection. Billing usage API returned404/insufficient user scope; exhaustion amount was not independently verified. Local results do not impersonate hosted checks.
 
 Final:78/78 Chromium+WebKit tests PASS(50.0s), including cinematic reflow320/375/768/1440, same exact path geometry, native scroll state, functional preference synchronization, reduced motion, comparison navigation and axe accessibility scan. Static HTML/JS/assets/provenance and Prettier checks PASS.8 endpoint renders independently approved. Source remains local for review; no hosted Actions result or public deployment claimed.
+
+## Closing scene refinement
+
+User rejected the final split heading/platform cards. Replaced in both index.html and cinematic.html with a full-width cobalt invitation, two-line typographic ending and compact Android/iPhone links; beta/install conditions stay visible. Native scroll settles the two title lines over24px, no opacity; reduced motion/static fallback preserve content. No change to download targets or production.
+
+Local Chromium/WebKit focused regression8/8 PASS(15.3s): home light/dark axe/reflow320–1440, active chapter/reduced-motion, both ending variants, minimum44px link targets and keyboard installation navigation. Static check, format check and diff check PASS. Fresh departure_review inspected4 actual375/1440 light/dark captures: PASS, no blocking findings; low polish notes about generous mobile whitespace and desktop note distance remain. No Actions execution or remote push. Evidence stays in same run, ending-* files; no new evidence root.

@@ -581,3 +581,36 @@ test("cinematic prototype keeps geometry, native scroll and reduced-motion final
     .analyze();
   expect(result.violations).toEqual([]);
 });
+
+test("departure ending keeps device actions accessible in both layouts", async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  for (const url of ["/index.html", "/cinematic.html"]) {
+    await page.goto(url);
+    for (const width of [320, 375, 768, 1440]) {
+      await page.setViewportSize({ width, height: 900 });
+      await page.locator("#start").scrollIntoViewIfNeeded();
+      expect(
+        await page.evaluate(
+          () => document.documentElement.scrollWidth <= innerWidth,
+        ),
+      ).toBe(true);
+      for (const platform of ["android", "ios"]) {
+        const link = page.locator(
+          `.departure a[href="download.html#${platform}"]`,
+        );
+        await expect(link).toBeVisible();
+        expect((await link.boundingBox()).height).toBeGreaterThanOrEqual(44);
+      }
+    }
+    const result = await new AxeBuilder({ page })
+      .include("#start")
+      .withTags(["wcag2a", "wcag2aa", "wcag21aa"])
+      .analyze();
+    expect(result.violations).toEqual([]);
+    await page.locator('.departure a[href="download.html#ios"]').focus();
+    await page.keyboard.press("Enter");
+    await expect(page).toHaveURL(/download.html#ios$/);
+  }
+});

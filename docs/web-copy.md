@@ -68,3 +68,9 @@ Map inspection refinement: 지도 배율 / 지도 축소 / 지도 확대 / 확�
 Opening: 도착보다 먼저. 마음이 가는 길. → 그 길을, 내 화면으로.
 Visible caption: 길을 만나고 / 내 방식으로 준비하고 · 앱 UI 재구성.
 Controls: 목적지/출발 준비 anchor, 균형 있게 / 경치에 더 비중을 with exact retained metrics, 경로 자세히 보기, 직접 길 고르기. They lead to working choices or existing explanatory flows; they do not perform a live route calculation.
+
+## Departure ending · 2026-11-18
+
+Final invitation: 길을 고르는 순간부터, Osol / 다음 길은, 당신의 취향으로.
+Actions: Android로 시작하기 → download.html#android; iPhone으로 시작하기 → download.html#ios.
+Availability beside actions: 지금은 베타로 함께 달리고 있어요. Android는 APK로, iPhone은 초대받은 계정으로 시작할 수 있어요.

@@ -63,6 +63,20 @@
   let frame;
   function update() {
     frame = null;
+    const departure = document.querySelector(".departure");
+    if (departure) {
+      const rect = departure.getBoundingClientRect();
+      const amount = reduced.matches
+        ? 1
+        : Math.min(
+            1,
+            Math.max(
+              0,
+              (innerHeight - rect.top) / Math.min(rect.height, innerHeight),
+            ),
+          );
+      departure.style.setProperty("--departure-progress", amount.toFixed(4));
+    }
     const threshold = Math.min(innerHeight * 0.4, 300);
     let current = 0;
     chapters.forEach((chapter, index) => {
@@ -98,9 +112,7 @@
       { threshold: 0.12 },
     );
     document
-      .querySelectorAll(
-        ".entry-intro, .section-intro, .screen-tour-copy, .start-section > div",
-      )
+      .querySelectorAll(".entry-intro, .section-intro, .screen-tour-copy")
       .forEach((element) => observer.observe(element));
   }
 })();

@@ -1041,3 +1041,133 @@
     outline: 3px solid Highlight;
   }
 }
+
+/* One closing invitation, with installation as its action. */
+.atlas-page .departure {
+  --departure-white: #fff;
+  --departure-ground: #2949bd;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: space-between;
+  gap: 4rem;
+  min-height: min(48rem, 88svh);
+  margin: 0 calc(-1 * max(2.5rem, (100vw - 79rem) / 2));
+  padding: clamp(3rem, 6vw, 6rem) max(2.5rem, calc((100vw - 79rem) / 2));
+  border: 0;
+  background: var(--departure-ground);
+  color: var(--departure-white);
+  overflow: clip;
+}
+.departure .departure-label {
+  color: var(--departure-white);
+  font-size: 0.9375rem;
+  margin: 0 0 2.5rem;
+}
+.departure h2 {
+  font-size: clamp(3.1rem, 7.7vw, 8rem);
+  line-height: 1.12;
+  letter-spacing: -0.045em;
+  margin: 0;
+}
+.departure h2 span {
+  display: block;
+  width: fit-content;
+}
+.departure h2 span:first-child {
+  transform: translateX(calc((1 - var(--departure-progress, 1)) * -24px));
+}
+.departure h2 span:last-child {
+  transform: translateX(calc((1 - var(--departure-progress, 1)) * 24px));
+}
+.departure-bottom {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 2rem;
+}
+.departure-actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+.departure-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  min-height: 3.75rem;
+  padding: 1rem 1.25rem;
+  border-radius: 0.75rem;
+  background: var(--departure-white);
+  color: var(--departure-ground);
+  font-size: 1rem;
+  font-weight: 650;
+  text-decoration: none;
+  transition: transform 0.35s var(--spring);
+}
+.departure-link:hover {
+  transform: translateY(-3px);
+}
+.departure-link .icon {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+.departure-secondary {
+  background: #203c9c;
+  color: var(--departure-white);
+}
+.departure-link:focus-visible {
+  outline-color: var(--departure-white);
+  outline-offset: 0.35rem;
+}
+.departure .departure-note {
+  color: var(--departure-white);
+  font-size: 0.8125rem;
+  line-height: 1.7;
+  margin: 0;
+  max-width: 26rem;
+}
+@media (max-width: 1000px) {
+  .departure-bottom {
+    align-items: start;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+}
+@media (max-width: 540px) {
+  .atlas-page .departure {
+    margin-inline: -1.25rem;
+    padding: 3.5rem 1.25rem;
+    min-height: 41rem;
+    gap: 3rem;
+  }
+  .departure h2 {
+    font-size: clamp(2.6rem, 10vw, 3.8rem);
+  }
+  .departure .departure-label {
+    margin-bottom: 2rem;
+    font-size: 0.875rem;
+  }
+  .departure-actions {
+    width: 100%;
+    flex-direction: column;
+  }
+  .departure-link {
+    width: 100%;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .departure h2 span,
+  .departure-link:hover {
+    transform: none !important;
+  }
+  .departure-link {
+    transition: none;
+  }
+}
+@media (forced-colors: active) {
+  .departure-link {
+    outline: 1px solid ButtonText;
+  }
+}
