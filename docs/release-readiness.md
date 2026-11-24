@@ -1,12 +1,17 @@
 # Web release readiness — 2026-11-16
 
-## Current merge and remaining work
+## Current release scope — 2026-11-24
 
-- Osol PR197 merged at `6f0cd23`; all six hosted gates passed at its reviewed head. The current APK/internal TestFlight still point to231, so a new signed beta is required to deliver the merged UI.
-- osol-web PR6 merged at `e13a893`; Chromium/WebKit60 tests,88 axe checks and fresh independent visual reviews passed. Main publishes the product site through GitHub Pages. See `qa-product-site.md` for scope and `map-provenance.json` for the actual map/87-point route.
-- PR5 integrates these **unpublished policy drafts**, reconciles0026/0029 and operational log/backup facts, and preserves all public policy bytes/consent versions. Branch integration is not a policy effective-date decision.
-- Remaining release work: new signed app build; Apple/email cold-start and deletion reauthentication; GPS/background/driving, voice between two devices, push and OS file/share/screen-reader checks; Apple Client Secret expiry confirmation; provider disclosures and policy dates/consent rollout; road-source freshness/national graph verification; store submission materials. Android offline download stays disabled until the SDK/JNI issue is fixed and device-verified.
-- These checks did not submit store builds, send user messages, change billing, activate a new policy, or modify operational DB/graph data. Source merge and web deployment must be reported separately from app distribution.
+- Public site: `https://osol.minestero.com/`, main `18a6f7b`. Product journey/scroll interaction and final installation section are deployed. PR8 and subsequent site work are merged; do not resume them as pending draft work. Current GitHub open-PR list is empty.
+- App distribution: **2.0.0(233)**. Both Android APK and internal iOS TestFlight channels in `https://api.minestero.com/app/updates.json` point to233; public store channels remain null. Public HTML and APK HEAD return200. This is endpoint/channel evidence, not a fresh browser or device QA run.
+- App2.0 is the shared design foundation, five tabs, My Rides and fuel/convenience POIs; it does not mean all41 connected screen prototypes were converted to native layouts. Current app design scope is in the Osol repository `docs/exec-plans/active/osol-2-design.md`.
+- App Store preparation is canonical in Osol `docs/legal/store-submission-prep.md`. ASC read-only check on November24: version1.0 PREPARE_FOR_SUBMISSION, no selected build, Korean description/keywords/support/marketing fields empty and no screenshot sets. Build233 is VALID and not expired. No ASC write/submission was made.
+- Before submission: reconcile current privacy manifest/SDK report with messaging, diagnostics and billing-OFF; confirm provider disclosures/policy dates; verify final build on devices and capture iPhone/iPad screenshots. Xcode currently targets both device families. These are app/release gates, not reasons to rebuild the public website from scratch.
+- `_drafts/legal/` remains unpublished. PR5 is no longer an open PR; its retained drafts are not an active publication request. Existing immutable policies, dates, supported consent version and public page bytes are unchanged by this documentation update.
+- Evidence retention: old local capture/release paths below are historical locations; their presence was not established in this audit. App233 IPA/APK exist in GitHub prerelease `beta-233`, which does not establish dSYM or QA-capture retention. Do not claim old screenshots were re-opened.
+- Next website work should start from a concrete interaction, performance, accessibility or content defect. Re-run the corresponding browser/format/static gates for product changes. No new visual QA, user study, policy publication, app build or device success is claimed here.
+
+## Previous readiness notes — November16 and earlier
 
 The following November11 audit is historical context. Current technical corrections in `_drafts/legal/*` and `release-audit-2026-11-16.md` supersede its older228/EXIF/log-limit descriptions.
 
