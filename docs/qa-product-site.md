@@ -1,5 +1,10 @@
 # 제품 사이트 QA · 2026-11-16
 
+> Historical QA scope. Current public source is main18a6f7b and app channels233 (2026-11-24).
+> The document below records earlier231/232 runs; these are not current deployment claims.
+> See [current release scope](release-readiness.md#current-release-scope--2026-11-24).
+
+
 브랜치 `feat/product-site-refresh`, 최신 main `313c25c` 기반. 기본 osol-web 체크아웃만 사용했다. 앱 배포231과 운영 API/DB는 변경하지 않았다. 테스트는 합성 인증·초대 값만 사용하고 실제 앱 실행 기본 동작을 가로채 복구 UI를 확인했다.
 
 ## 구현과 발견 수정
