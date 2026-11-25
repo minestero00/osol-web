@@ -3,6 +3,9 @@
   const film = document.querySelector(".film");
   if (!film) return;
   const reduced = matchMedia("(prefers-reduced-motion: reduce)");
+  const shortViewport = matchMedia(
+    "(max-height: 700px), (min-width: 480px) and (max-width: 800px)",
+  );
   const title = film.querySelector("[data-film-title]");
   const copy = film.querySelector("[data-film-copy]");
   const phase = film.querySelector("[data-film-phase]");
@@ -43,12 +46,13 @@
   function update() {
     frame = 0;
     const rect = film.getBoundingClientRect();
-    const progress = reduced.matches
-      ? 1
-      : Math.min(
-          1,
-          Math.max(0, -rect.top / Math.max(1, rect.height - innerHeight)),
-        );
+    const progress =
+      reduced.matches || shortViewport.matches
+        ? 1
+        : Math.min(
+            1,
+            Math.max(0, -rect.top / Math.max(1, rect.height - innerHeight)),
+          );
     film.style.setProperty("--film-progress", progress.toFixed(4));
     film.querySelector(".film-app-summary").inert = progress < 0.9;
     film.querySelector(".film-app-head").inert = progress < 0.9;
@@ -77,5 +81,6 @@
   addEventListener("scroll", schedule, { passive: true });
   addEventListener("resize", schedule);
   reduced.addEventListener("change", schedule);
+  shortViewport.addEventListener("change", schedule);
   update();
 })();

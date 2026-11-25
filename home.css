@@ -1358,3 +1358,31 @@
     display: inline;
   }
 }
+
+/* Full-bleed sections share the page gutter instead of deriving it from vw. */
+.cinematic-page main.site-shell {
+  --site-gutter: 2.5rem;
+  max-width: none;
+  padding-inline: var(--site-gutter);
+}
+.cinematic-page main.site-shell > section:not(.film):not(.departure) {
+  width: 100%;
+  max-width: 79rem;
+  margin-inline: auto;
+}
+.cinematic-page .film,
+.cinematic-page .departure {
+  margin-inline: calc(-1 * var(--site-gutter));
+}
+.cinematic-page .departure {
+  display: grid;
+  grid-template-columns: min(100%, 79rem);
+  justify-content: center;
+  align-content: space-between;
+  padding-inline: var(--site-gutter);
+}
+@media (max-width: 540px) {
+  .cinematic-page main.site-shell {
+    --site-gutter: 1.25rem;
+  }
+}

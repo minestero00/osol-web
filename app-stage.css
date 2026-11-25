@@ -362,3 +362,54 @@
 .no-js .route-experience .route-console {
   display: flex;
 }
+
+/* Keep the preferred canvas ratio from growing the block past its container. */
+.route-experience.is-app {
+  width: 100%;
+  min-width: 0;
+}
+@media (min-width: 1001px) {
+  .is-app .route-endpoints,
+  .is-app .route-console,
+  .is-app .ride-heading,
+  .is-app .ride-bottom {
+    width: min(22rem, 31%);
+  }
+}
+
+/* A landscape phone uses the available width instead of a tall portrait stage. */
+@media (min-width: 600px) and (max-width: 1000px) and (max-height: 500px) {
+  .route-experience.is-app {
+    height: max(
+      30rem,
+      calc(var(--map-top, 5rem) + var(--sheet-space, 20rem) + 1rem)
+    );
+  }
+  .is-app .map-home,
+  .is-app[data-mode="guidance"] .map-home {
+    inset: 0 0 0 48%;
+  }
+  .is-app .route-endpoints,
+  .is-app .route-console,
+  .is-app .ride-heading,
+  .is-app .ride-bottom {
+    left: var(--app-inset);
+    right: auto;
+    width: 44%;
+  }
+  .is-app .route-console {
+    bottom: var(--app-inset);
+    border-radius: 1.25rem;
+  }
+  .is-app .map-toolbar {
+    top: var(--app-inset);
+  }
+  .is-app[data-mode="guidance"] .map-toolbar {
+    top: var(--app-inset);
+  }
+}
+
+/* Selection colors change together, preserving contrast throughout the change. */
+.is-app .route-choice {
+  transition: transform 0.16s ease-out;
+}

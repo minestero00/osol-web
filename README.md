@@ -75,3 +75,7 @@ The noindex cinematic preview mirrors the homepage interaction; keep both in syn
 ## App-shaped map stage
 
 `app-stage.css` enhances the comparison into a single map viewport with route-choice and guidance modes. The route sheet and turn banner use the native app's composition without a fake device frame/status bar. Actual next-maneuver intervals drive the turn distance; original geometry is retained. ResizeObserver reserves map space for real panel heights on mobile. Native MapAttributionScope/MapCreditsScreen already implement startup-only credits and settings licence access; web credits collapse after a fully-visible foreground five seconds once per page, with a persistent help.html#map-licenses link. No-JS keeps attribution visible.
+
+## Responsive regression coverage
+
+`tests/responsive.spec.cjs` checks all12 published/preview/support/policy routes in both themes at11 viewport sizes, including1000/1001px and short landscape. Opening controls are also measured at tablet portrait widths480–800px. Short/tablet introductions flow in document order; normal taller phone and wide desktop retain scroll transitions. Header labels, actual hit targets, map/sheet clearance and restored selections are tested. Full-bleed sections share the shell gutter, and reduced motion never interpolates layout geometry.

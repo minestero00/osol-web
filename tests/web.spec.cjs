@@ -48,6 +48,19 @@ for (const url of pages)
       await expect(page.locator("h1:visible")).toBeVisible();
       for (const width of [320, 375, 768, 1440]) {
         await page.setViewportSize({ width, height: width > 720 ? 1000 : 812 });
+        await page.evaluate(async () => {
+          await new Promise((resolve) =>
+            requestAnimationFrame(() => requestAnimationFrame(resolve)),
+          );
+          await Promise.all(
+            document
+              .getAnimations()
+              .filter(
+                (a) => a.effect?.getComputedTiming().iterations !== Infinity,
+              )
+              .map((a) => a.finished.catch(() => {})),
+          );
+        });
         expect(
           await page.evaluate(
             () => document.documentElement.scrollWidth <= innerWidth,
