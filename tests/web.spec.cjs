@@ -553,7 +553,7 @@ test("cinematic prototype keeps geometry, native scroll and reduced-motion final
     });
   });
   await expect(page.locator("[data-film-phase]")).toHaveText(
-    "내 방식으로 준비하고 · 앱 UI 재구성",
+    "내 방식으로 준비하고",
   );
   await page.locator('[data-film-route="balanced"]').click();
   await expect(page.locator(".film-app-summary strong")).toContainText("14.8");
