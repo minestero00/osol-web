@@ -83,3 +83,9 @@ Guidance labels: 길을 골랐다면, 달려볼까요? / 미포에서 일광까�
 Failure: 안내를 불러오지 못했어요 / 다시 눌러 불러올 수 있어요.
 Reduced motion feedback: 이전 안내와 다음 안내, 경로 진행으로 길을 살펴보세요.
 Turn text comes unchanged from retained actual routing instructions; remaining distance derives from response distance and geographic progress. No dummy/recording/saving/microphone/connection notices or fake success toast. No new legal policy promises.
+
+## App-shaped guidance / copy reduction · 2026-11-25
+
+User rejects redundant numerical comparisons. Remove route difference/explanation sentences; route buttons retain actual distance/time. New actions: 이 길로 안내 보기 / 경로 바꾸기. Summary: 남은 거리 / 예상 남은 시간. Guidance shows the next actual maneuver and geographic distance to its point, no invented speed or live trip. Arrival: 안내를 마쳤어요.
+
+Native current main already has once-per-launch five-second credit + settings MapCreditsScreen and Flutter licence registry. Public web now mirrors once-per-page readable five-second credit exposure; no repeat on map switching/enlargement or background resume. No-JS retains visible credit. Footer 지도·오픈소스 links to persistent help section, not a fake web settings tab. OSMF Attribution Guidelines Interactive maps permit startup attribution, automatic fade after5s and discoverable About/Data licences. Source https://osmfoundation.org/wiki/Licence/Attribution_Guidelines#Interactive_maps checked2026-11-25.

@@ -332,7 +332,7 @@ test("map enlargement contains keyboard focus, Escape restores selection and scr
   await page.goto("/");
   await page.locator("[data-route=balanced]").click();
   const inlineWidth = await page
-    .locator("#atlas-map")
+    .locator("#map-home")
     .evaluate((e) => e.getBoundingClientRect().width);
   await page.locator(".map-expand").click();
   await expect(page.locator("#map-dialog")).toBeVisible();
@@ -380,7 +380,9 @@ test("map failure is distinct from a route result and retry recovers", async ({
   await page.goto("/");
   await expect(page.locator(".map-error")).toBeVisible();
   await page.locator("[data-route=balanced]").click();
-  await expect(page.locator("#route-difference")).toContainText("2.0km 덜");
+  await expect(
+    page.locator("[data-route=balanced] .choice-metrics"),
+  ).toContainText("14.8");
   fail = false;
   await page.locator("#map-retry").click();
   await expect(page.locator(".map-error")).toBeHidden();

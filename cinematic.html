@@ -28,6 +28,7 @@
     <script src="journey.js" defer></script>
     <link rel="stylesheet" href="home.css" />
     <link rel="stylesheet" href="cinematic.css" />
+    <link rel="stylesheet" href="app-stage.css" />
     <script src="cinematic.js" defer></script>
   </head>
   <body class="atlas-page cinematic-page">
@@ -189,8 +190,7 @@
           </div>
           <div class="film-caption">
             <span data-film-phase>길을 만나고</span
-            ><span
-              >미포 → 일광 ·
+            ><span data-map-credit>
               <a href="https://www.openstreetmap.org/copyright"
                 >© OpenStreetMap</a
               >
@@ -222,6 +222,22 @@
           </div>
         </div>
         <div class="route-experience" id="route-experience">
+          <div class="route-endpoints">
+            <p>출발 <strong>부산 미포</strong></p>
+            <span aria-hidden="true">↓</span>
+            <p>도착 <strong>일광해수욕장</strong></p>
+          </div>
+          <button
+            id="ride-exit"
+            class="app-exit"
+            type="button"
+            data-js-only
+            hidden
+          >
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="m14 5-7 7 7 7" /></svg
+            >경로 바꾸기
+          </button>
           <div class="map-column">
             <div class="map-home" id="map-home">
               <div
@@ -304,55 +320,74 @@
                 </svg>
                 <div>
                   <p id="ride-status">길을 골랐다면, 달려볼까요?</p>
+                  <output
+                    id="ride-turn-distance"
+                    aria-label="다음 안내까지"
+                    aria-live="off"
+                    >40 m</output
+                  >
                   <strong id="ride-instruction">미포에서 일광까지</strong>
                 </div>
-                <output id="ride-remaining" aria-live="off">16.8 km</output>
               </div>
-              <div class="ride-actions">
-                <button type="button" id="ride-play" class="ride-play">
-                  안내 재생
-                </button>
-                <button
-                  type="button"
-                  id="ride-previous"
-                  class="ride-step"
-                  aria-label="이전 안내"
-                  disabled
-                >
-                  <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="m15 6-6 6 6 6" />
-                  </svg>
-                </button>
-                <label class="sr-only" for="ride-progress">경로 진행</label>
-                <input
-                  id="ride-progress"
-                  type="range"
-                  min="0"
-                  max="1000"
-                  step="1"
-                  value="0"
-                  aria-valuetext="출발"
-                  disabled
-                />
-                <button
-                  type="button"
-                  id="ride-next"
-                  class="ride-step"
-                  aria-label="다음 안내"
-                  disabled
-                >
-                  <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="m9 6 6 6-6 6" />
-                  </svg>
-                </button>
-                <button
-                  type="button"
-                  id="ride-reset"
-                  class="ride-reset"
-                  disabled
-                >
-                  처음으로
-                </button>
+              <div class="ride-bottom">
+                <div class="ride-summary">
+                  <div>
+                    <span>남은 거리</span
+                    ><output id="ride-remaining" aria-live="off"
+                      >16.8 km</output
+                    >
+                  </div>
+                  <div>
+                    <span>예상 남은 시간</span
+                    ><output id="ride-duration" aria-live="off">약 20분</output>
+                  </div>
+                </div>
+                <div class="ride-actions">
+                  <button type="button" id="ride-play" class="ride-play">
+                    안내 재생
+                  </button>
+                  <button
+                    type="button"
+                    id="ride-previous"
+                    class="ride-step"
+                    aria-label="이전 안내"
+                    disabled
+                  >
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="m15 6-6 6 6 6" />
+                    </svg>
+                  </button>
+                  <label class="sr-only" for="ride-progress">경로 진행</label>
+                  <input
+                    id="ride-progress"
+                    type="range"
+                    min="0"
+                    max="1000"
+                    step="1"
+                    value="0"
+                    aria-valuetext="출발"
+                    disabled
+                  />
+                  <button
+                    type="button"
+                    id="ride-next"
+                    class="ride-step"
+                    aria-label="다음 안내"
+                    disabled
+                  >
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="m9 6 6 6-6 6" />
+                    </svg>
+                  </button>
+                  <button
+                    type="button"
+                    id="ride-reset"
+                    class="ride-reset"
+                    disabled
+                  >
+                    처음으로
+                  </button>
+                </div>
               </div>
               <p id="ride-feedback" class="sr-only" role="status"></p>
             </div>
@@ -367,13 +402,8 @@
             </div>
           </div>
           <div class="route-console">
-            <div class="route-endpoints">
-              <p>출발 <strong>부산 미포</strong></p>
-              <span aria-hidden="true">↓</span>
-              <p>도착 <strong>일광해수욕장</strong></p>
-            </div>
             <div class="route-prompt">
-              <h2>오늘은 어떤 길로?</h2>
+              <h2>어떤 길로 달릴까요?</h2>
               <p>같은 목적지, 나에게 맞는 길.</p>
             </div>
             <div class="route-choices" role="group" aria-label="경로 취향">
@@ -409,14 +439,6 @@
                 >
               </button>
             </div>
-            <div class="route-result" aria-live="polite" aria-atomic="true">
-              <p id="route-difference">
-                균형 경로보다 <strong>2.0km 더, 약 3분 더.</strong>
-              </p>
-              <p id="route-explanation">
-                경치와 한적함에 더 비중을 둔 길이에요.
-              </p>
-            </div>
             <label class="compare-switch" data-js-only
               ><input type="checkbox" id="compare-routes" /><span
                 class="switch-track"
@@ -427,6 +449,14 @@
             <p class="compare-legend" id="compare-legend" hidden>
               실선은 선택한 길, 점선은 다른 길이에요.
             </p>
+            <button
+              id="ride-enter"
+              class="button app-enter"
+              type="button"
+              data-js-only
+            >
+              이 길로 안내 보기
+            </button>
             <noscript
               ><p class="no-script-demo">
                 경치에 비중을 둔 경로를 표시하고 있어요. JavaScript를 켜면 두
@@ -437,7 +467,7 @@
         </div>
         <div class="atlas-provenance">
           <p>미포 → 일광해수욕장</p>
-          <p>
+          <p data-map-credit>
             <a href="https://www.openstreetmap.org/copyright"
               >© OpenStreetMap</a
             >
@@ -576,8 +606,7 @@
           tabindex="0"
           aria-label="확대한 지도. 방향키 또는 스크롤로 이동할 수 있어요."
         ></div>
-        <p class="dialog-attribution">
-          2026.11.17 탐색 예시 ·
+        <p class="dialog-attribution" data-map-credit>
           <a href="https://www.openstreetmap.org/copyright">© OpenStreetMap</a>
           · <a href="https://protomaps.com/">© Protomaps</a>
         </p>
@@ -771,6 +800,7 @@
         </div>
         <nav class="footer-links" aria-label="하단 메뉴">
           <a href="download.html">설치 안내</a><a href="help.html">도움말</a
+          ><a href="help.html#map-licenses">지도·오픈소스</a
           ><a href="mailto:superriaco@gmail.com">문의</a
           ><a href="terms.html">이용약관</a
           ><a href="privacy.html">개인정보 처리방침</a
