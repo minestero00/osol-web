@@ -1229,6 +1229,8 @@ details.faq .answer {
   *::after {
     animation-duration: 0.1s !important;
     transition-duration: 0.1s !important;
+    transition-property:
+      color, background-color, border-color, opacity !important;
     scroll-behavior: auto !important;
   }
   .button:hover,
@@ -1462,4 +1464,23 @@ details.faq .answer {
 }
 .screen-tour-copy > .text-link {
   margin-block: 1rem;
+}
+
+/* Short header actions stay readable rather than breaking Korean labels. */
+.nav-actions > .button {
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+@media (max-width: 359px) {
+  .nav-shell {
+    gap: 0.25rem;
+    padding-left: 0.75rem;
+    padding-right: 0.4rem;
+  }
+  .nav-actions {
+    gap: 0.2rem;
+  }
+  .nav-actions > .button {
+    padding-inline: 0.65rem;
+  }
 }
