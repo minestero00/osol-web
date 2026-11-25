@@ -74,3 +74,12 @@ Controls: 목적지/출발 준비 anchor, 균형 있게 / 경치에 더 비중�
 Final invitation: 길을 고르는 순간부터, Osol / 다음 길은, 당신의 취향으로.
 Actions: Android로 시작하기 → download.html#android; iPhone으로 시작하기 → download.html#ios.
 Availability beside actions: 지금은 베타로 함께 달리고 있어요. Android는 APK로, iPhone은 초대받은 계정으로 시작할 수 있어요.
+
+## Direct route / guidance exploration · 2026-11-25
+
+Overrides repeated public example/reconstruction notices above: keep detailed sourcing inside “이 경로는 어떻게 골랐나요?”; visible map attribution remains. Film phases: 길을 만나고 / 내 방식으로 준비하고. Route comparison: 경치 경로보다2.0km 덜, 약3분 덜.
+
+Guidance labels: 길을 골랐다면, 달려볼까요? / 미포에서 일광까지 / 안내 재생 / 안내 불러오는 중 / 안내 다시 불러오기 / 일시정지 / 이어서 재생 / 다시 재생 / 안내 살펴보기 / 이전 안내 / 다음 안내 / 경로 진행 / 처음으로 / 주행 미리보기 / 안내 재생 중 / 남은 거리 / 일광해수욕장 도착 / 마음에 드는 길을 앱에서 만나세요.
+Failure: 안내를 불러오지 못했어요 / 다시 눌러 불러올 수 있어요.
+Reduced motion feedback: 이전 안내와 다음 안내, 경로 진행으로 길을 살펴보세요.
+Turn text comes unchanged from retained actual routing instructions; remaining distance derives from response distance and geographic progress. No dummy/recording/saving/microphone/connection notices or fake success toast. No new legal policy promises.

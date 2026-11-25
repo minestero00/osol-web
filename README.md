@@ -65,3 +65,9 @@ Always install test browsers into the existing evidence run using `PLAYWRIGHT_BR
 During Actions usage limits, develop and verify locally using the exact `check`, `format:check` and Chromium/WebKit test scope above. Save source SHA, commands, logs and screenshots in the existing evidence run. Local success is not a hosted CI result. Keep work local until publication is needed; avoid repeated pushes that each start a workflow. Check actual workflow annotations before claiming billing/capacity failure. Do not change billing, disable required checks, broaden bypass permissions or mark hosted checks successful. Pages publication remains a separate deployment step.
 
 `cinematic.html` is the first-three-scene scroll prototype, with `cinematic.css`/`cinematic.js`. It reuses the registered real map and exact route geometry; it is a UI reconstruction, not a native screenshot. Open it on the local preview server and scroll, then select preferences inside the scene or in the comparison below.
+
+## Route → guidance exploration
+
+`route-demo.js` lazily reads the retained same-origin comparison/source.json on the first guidance action. Original instruction intervals and geographic distances drive a registered position marker and travelled prefix; no runtime routing service, map SDK, geolocation or microphone is used. Route choices retain independent progress. The visitor controls play/pause, turn steps, range and restart; playback pauses when hidden, off-screen, expanded or switched. Reduced motion provides discrete keyboard/touch exploration. Remaining distance is labelled, and no real trip/record/share is created. Public source details live in the existing expandable route-method section.
+
+The noindex cinematic preview mirrors the homepage interaction; keep both in sync. `tests/ride.spec.cjs` verifies both entries, response-derived guidance, recovery, arrival/restart, route switching, reduced motion, responsive controls and loaded-state accessibility.

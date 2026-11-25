@@ -24,8 +24,8 @@
         : "16.8 <small>km</small><span>약 20분</span>";
     film.querySelector("[data-film-result]").textContent =
       id === "balanced"
-        ? "경치·한적함·편안함을 고르게 둔 실제 탐색 예시"
-        : "경치와 한적함에 더 비중을 둔 실제 탐색 예시";
+        ? "경치·한적함·편안함을 고르게"
+        : "경치와 한적함에 더 비중을 둔 길";
   }
   for (const button of choices)
     button.addEventListener("click", () => {
@@ -69,9 +69,7 @@
     copy.innerHTML = step
       ? "지도로 살펴보고, 취향으로 고르고.<br>아래에서 두 실제 경로를 직접 비교해보세요."
       : "부산 미포에서 일광까지.<br>같은 목적지에도, 다른 라이딩이 있어요.";
-    phase.textContent = step
-      ? "내 방식으로 준비하고 · 앱 UI 재구성"
-      : "길을 만나고 · 앱 UI 재구성";
+    phase.textContent = step ? "내 방식으로 준비하고" : "길을 만나고";
   }
   function schedule() {
     if (!frame) frame = requestAnimationFrame(update);

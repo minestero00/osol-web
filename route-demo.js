@@ -11,15 +11,15 @@
       label: "균형 있게",
       distance: "14.8",
       minutes: "17",
-      difference: "경치 예시보다 2.0km 덜, 약 3분 덜.",
-      explanation: "경치와 한적함, 편안함의 비중을 고르게 둔 예시예요.",
+      difference: "경치 경로보다 2.0km 덜, 약 3분 덜.",
+      explanation: "경치와 한적함, 편안함을 고르게 고려한 길이에요.",
     },
     scenic: {
       label: "경치에 더 비중을",
       distance: "16.8",
       minutes: "20",
       difference: "균형 경로보다 2.0km 더, 약 3분 더.",
-      explanation: "경치와 한적함의 비중을 높여 같은 목적지로 찾은 예시예요.",
+      explanation: "경치와 한적함에 더 비중을 둔 길이에요.",
     },
   };
   let selected = "scenic";
@@ -42,7 +42,7 @@
     // Paint the active road last, maintaining exact coordinates and fixed camera.
     active.parentElement.insertBefore(
       active,
-      active.parentElement.querySelector(".route-end"),
+      active.parentElement.querySelector(".ride-trail"),
     );
     if (animate && !reduced.matches && active.animate) {
       animation = active.animate([{ opacity: 0.25 }, { opacity: 1 }], {
@@ -57,11 +57,14 @@
       example.explanation;
     map.setAttribute(
       "aria-label",
-      `미포에서 일광까지. ${example.label} 실제 탐색 예시, ${example.distance}km, 약 ${example.minutes}분.`,
+      `미포에서 일광까지. ${example.label} 경로, ${example.distance}km, 약 ${example.minutes}분.`,
     );
+    pauseRide();
+    paintRide();
     document.querySelector("#dialog-route-label").textContent =
       `${example.label} · ${example.distance}km · 약 ${example.minutes}분`;
   }
+  let ride;
   for (const button of buttons) {
     button.disabled = false;
     button.addEventListener("click", () => {
@@ -174,6 +177,7 @@
   window.addEventListener("blur", endDrag);
   expand.addEventListener("click", () => {
     if (dialog.open) return;
+    pauseRide();
     previousOverflow = document.documentElement.style.overflow;
     viewport.append(map);
     dialog.showModal();
@@ -216,6 +220,8 @@
     );
     error.hidden = !failed;
     expand.disabled = failed;
+    play.disabled = failed;
+    if (failed) pauseRide();
   };
   for (const image of images) {
     image.addEventListener("load", syncImageState);
@@ -238,6 +244,267 @@
         image.src = url.href;
       }
   });
+  const play = document.querySelector("#ride-play");
+  const progress = document.querySelector("#ride-progress");
+  const previous = document.querySelector("#ride-previous");
+  const next = document.querySelector("#ride-next");
+  const reset = document.querySelector("#ride-reset");
+  const status = document.querySelector("#ride-status");
+  const instruction = document.querySelector("#ride-instruction");
+  const remaining = document.querySelector("#ride-remaining");
+  const feedback = document.querySelector("#ride-feedback");
+  const direction = document.querySelector(".ride-direction");
+  const trail = map.querySelector(".ride-trail");
+  const marker = map.querySelector(".ride-position");
+  const positions = { balanced: 0, scenic: 0 };
+  let playing = false;
+  let loading;
+  let frame;
+  let lastTick;
+  let visible = false;
+
+  const metres = (value) =>
+    value < 1000 ? `${Math.round(value)} m` : `${(value / 1000).toFixed(1)} km`;
+  const radians = (degrees) => (degrees * Math.PI) / 180;
+  function geographicDistance(a, b) {
+    const dlat = radians(b[1] - a[1]);
+    const dlon = radians(b[0] - a[0]);
+    const h =
+      Math.sin(dlat / 2) ** 2 +
+      Math.cos(radians(a[1])) *
+        Math.cos(radians(b[1])) *
+        Math.sin(dlon / 2) ** 2;
+    return 12742000 * Math.asin(Math.sqrt(Math.min(1, h)));
+  }
+  async function loadRide() {
+    if (ride) return true;
+    if (loading) return loading;
+    play.disabled = true;
+    play.textContent = "안내 불러오는 중";
+    loading = (async () => {
+      try {
+        const response = await fetch("assets/maps/comparison/source.json", {
+          signal: AbortSignal.timeout(10000),
+        });
+        if (!response.ok) throw new Error("route unavailable");
+        const source = await response.json();
+        const prepared = {};
+        for (const id of Object.keys(examples)) {
+          const route = source.find((item) => item.id === id)?.response
+            .routes[0];
+          const coordinates = route?.geometry?.coordinates;
+          const path = paths.find((path) => path.dataset.path === id);
+          const points = path
+            .getAttribute("d")
+            .match(/-?\d+(?:\.\d+)?/g)
+            .map(Number);
+          if (
+            !coordinates?.length ||
+            points.length !== coordinates.length * 2 ||
+            points.some((point) => !Number.isFinite(point)) ||
+            coordinates.some(
+              (point) =>
+                point.length !== 2 || point.some((v) => !Number.isFinite(v)),
+            ) ||
+            !(route.distance_m > 0) ||
+            !route.instructions?.length
+          ) {
+            throw new Error("route incomplete");
+          }
+          const distances = [0];
+          coordinates.slice(1).forEach((point, i) => {
+            distances.push(
+              distances[i] + geographicDistance(coordinates[i], point),
+            );
+          });
+          const total = distances.at(-1);
+          if (!(total > 0)) throw new Error("empty route");
+          const steps = route.instructions.map((step) => {
+            const start = step.interval[0];
+            if (
+              !Number.isInteger(start) ||
+              start < 0 ||
+              start >= coordinates.length ||
+              typeof step.text !== "string"
+            )
+              throw new Error("invalid instruction");
+            return { ...step, fraction: distances[start] / total };
+          });
+          prepared[id] = { route, points, distances, total, steps };
+        }
+        ride = prepared;
+        paintRide();
+        return true;
+      } catch {
+        ride = undefined;
+        status.textContent = "안내를 불러오지 못했어요";
+        instruction.textContent = "다시 눌러 불러올 수 있어요.";
+        feedback.textContent = "안내를 불러오지 못했어요. 다시 시도해 주세요.";
+        play.textContent = "안내 다시 불러오기";
+        return false;
+      } finally {
+        loading = null;
+        play.disabled = !error.hidden;
+      }
+    })();
+    return loading;
+  }
+  function currentStep() {
+    const model = ride[selected];
+    let index = 0;
+    model.steps.forEach((step, i) => {
+      if (step.fraction <= positions[selected] + 0.000001) index = i;
+    });
+    return index;
+  }
+  function paintRide() {
+    const fraction = positions[selected];
+    const arrived = fraction >= 1;
+    remaining.textContent = metres(
+      (ride?.[selected].route.distance_m ||
+        Number(examples[selected].distance) * 1000) *
+        (1 - fraction),
+    );
+    progress.value = String(Math.round(fraction * 1000));
+    play.textContent = reduced.matches
+      ? "안내 살펴보기"
+      : playing
+        ? "일시정지"
+        : arrived
+          ? "다시 재생"
+          : fraction > 0
+            ? "이어서 재생"
+            : "안내 재생";
+    if (!ride) return;
+    const model = ride[selected];
+    const step = model.steps[currentStep()];
+    status.textContent = arrived
+      ? "일광해수욕장 도착"
+      : playing
+        ? "안내 재생 중"
+        : "주행 미리보기";
+    instruction.textContent = arrived
+      ? "마음에 드는 길을 앱에서 만나세요."
+      : step.text;
+    const sign = Math.abs(step.sign);
+    const turnPaths = {
+      0: "M12 20V4m-6 6 6-6 6 6",
+      1: "M7 20v-6a5 5 0 0 1 2-4l9-7m-7 0h7v7",
+      2: "M6 20V9a3 3 0 0 1 3-3h11m-5-5 5 5-5 5",
+      3: "M6 20V7a3 3 0 0 1 5-2l8 8m-7 0h7V6",
+      4: "M5 21V3m0 0h13l-3 4 3 4H5",
+      6: "M8 19a7 7 0 1 1 10-9m-4-1h5V4M8 19v-5",
+      7: "M12 21v-9m0 0 7-8m-6 0h6v6M12 12 5 4",
+    };
+    direction
+      .querySelector("path")
+      .setAttribute("d", turnPaths[sign] || "M5 12h14");
+    direction.dataset.turn = step.sign < 0 ? "left" : "right";
+    progress.disabled = false;
+    previous.disabled = fraction === 0;
+    next.disabled = arrived;
+    reset.disabled = fraction === 0;
+    progress.setAttribute(
+      "aria-valuetext",
+      `${Math.round(fraction * 100)}%, ${arrived ? "도착" : step.text}, 남은 거리 ${remaining.textContent}`,
+    );
+    const target = fraction * model.total;
+    let end = model.distances.findIndex((distance) => distance > target);
+    if (end < 0) end = model.distances.length - 1;
+    const start = Math.max(0, end - 1);
+    const segment = model.distances[end] - model.distances[start];
+    const offset = segment ? (target - model.distances[start]) / segment : 0;
+    const x =
+      model.points[start * 2] +
+      (model.points[end * 2] - model.points[start * 2]) * offset;
+    const y =
+      model.points[start * 2 + 1] +
+      (model.points[end * 2 + 1] - model.points[start * 2 + 1]) * offset;
+    marker.setAttribute("transform", `translate(${x} ${y})`);
+    marker.removeAttribute("hidden");
+    // A prefix of the original registered coordinates, ending exactly at the marker.
+    const travelled = [];
+    for (let i = 0; i <= start; i++)
+      travelled.push(`${model.points[i * 2]},${model.points[i * 2 + 1]}`);
+    trail.setAttribute("d", `M${travelled.join(" L")} L${x},${y}`);
+    trail.removeAttribute("hidden");
+  }
+  function pauseRide() {
+    playing = false;
+    cancelAnimationFrame(frame);
+    lastTick = null;
+    if (ride) paintRide();
+  }
+  function tick(now) {
+    if (!playing) return;
+    if (lastTick !== null)
+      positions[selected] = Math.min(
+        1,
+        positions[selected] + Math.min(now - lastTick, 100) / 45000,
+      );
+    lastTick = now;
+    paintRide();
+    if (positions[selected] >= 1) {
+      pauseRide();
+      feedback.textContent = "일광해수욕장에 도착했어요.";
+    } else frame = requestAnimationFrame(tick);
+  }
+  play.addEventListener("click", async () => {
+    if (playing) {
+      pauseRide();
+      return;
+    }
+    if (!(await loadRide())) return;
+    if (document.hidden || !visible || !error.hidden) return;
+    if (reduced.matches) {
+      feedback.textContent =
+        "이전 안내와 다음 안내, 경로 진행으로 길을 살펴보세요.";
+      progress.focus();
+      return;
+    }
+    if (positions[selected] >= 1) positions[selected] = 0;
+    playing = true;
+    lastTick = null;
+    paintRide();
+    frame = requestAnimationFrame(tick);
+  });
+  progress.addEventListener("input", () => {
+    const value = Number(progress.value);
+    pauseRide();
+    positions[selected] = value / 1000;
+    paintRide();
+  });
+  function stepRide(forward) {
+    pauseRide();
+    const steps = ride[selected].steps;
+    const fraction = positions[selected];
+    const candidates = steps.map((step) => step.fraction);
+    positions[selected] = forward
+      ? (candidates.find((value) => value > fraction + 0.000001) ?? 1)
+      : (candidates.filter((value) => value < fraction - 0.000001).at(-1) ?? 0);
+    paintRide();
+    feedback.textContent = instruction.textContent;
+  }
+  previous.addEventListener("click", () => stepRide(false));
+  next.addEventListener("click", () => stepRide(true));
+  reset.addEventListener("click", () => {
+    pauseRide();
+    positions[selected] = 0;
+    paintRide();
+    feedback.textContent = "출발 지점으로 돌아왔어요.";
+  });
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) pauseRide();
+  });
+  new IntersectionObserver(([entry]) => {
+    visible = entry.isIntersecting;
+    if (!visible) pauseRide();
+  }).observe(document.querySelector(".ride-controls"));
+  reduced.addEventListener("change", () => {
+    pauseRide();
+    paintRide();
+  });
   select(selected, false);
+  paintRide();
   syncImageState();
 })();
