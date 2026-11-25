@@ -4,7 +4,7 @@
   "scripts": {
     "check": "python3 tools/check-site.py && node --check site.js && node --check theme.js && node --check route-demo.js && node --check journey.js && node --check cinematic.js",
     "test": "playwright test",
-    "format:check": "prettier --check '*.html' style.css home.css cinematic.css site.js route-demo.js journey.js cinematic.js theme.js tests/*.cjs playwright.config.cjs"
+    "format:check": "prettier --check '*.html' style.css home.css cinematic.css app-stage.css site.js route-demo.js journey.js cinematic.js theme.js tests/*.cjs playwright.config.cjs"
   },
   "devDependencies": {
     "@axe-core/playwright": "4.14.0",

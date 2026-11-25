@@ -11,15 +11,11 @@
       label: "균형 있게",
       distance: "14.8",
       minutes: "17",
-      difference: "경치 경로보다 2.0km 덜, 약 3분 덜.",
-      explanation: "경치와 한적함, 편안함을 고르게 고려한 길이에요.",
     },
     scenic: {
       label: "경치에 더 비중을",
       distance: "16.8",
       minutes: "20",
-      difference: "균형 경로보다 2.0km 더, 약 3분 더.",
-      explanation: "경치와 한적함에 더 비중을 둔 길이에요.",
     },
   };
   let selected = "scenic";
@@ -51,10 +47,6 @@
       });
     }
     document.querySelector("#map-key").textContent = example.label;
-    document.querySelector("#route-difference").textContent =
-      example.difference;
-    document.querySelector("#route-explanation").textContent =
-      example.explanation;
     map.setAttribute(
       "aria-label",
       `미포에서 일광까지. ${example.label} 경로, ${example.distance}km, 약 ${example.minutes}분.`,
@@ -181,6 +173,7 @@
     previousOverflow = document.documentElement.style.overflow;
     viewport.append(map);
     dialog.showModal();
+    syncCreditTimer();
     setZoom(innerWidth <= 540 ? 2 : 1.25, true);
     document.documentElement.style.overflow = "hidden";
     dialog.querySelector(".dialog-close").focus();
@@ -201,6 +194,7 @@
   });
   dialog.addEventListener("close", () => {
     endDrag();
+    syncCreditTimer();
     settle?.cancel();
     map.style.width = "";
     map.style.translate = "";
@@ -208,6 +202,43 @@
     document.documentElement.style.overflow = previousOverflow || "";
     expand.focus({ preventScroll: true });
   });
+
+  // One readable foreground exposure per page load, not per map or dialog.
+  const credits = [...document.querySelectorAll("[data-map-credit]")];
+  const visibleCredits = new Set();
+  let creditsCollapsed = false;
+  let creditTimer;
+  function syncCreditTimer() {
+    const readable =
+      !document.hidden &&
+      [...visibleCredits].some(
+        (node) => !dialog.open || node.closest("dialog") === dialog,
+      );
+    if (!readable || creditsCollapsed) {
+      clearTimeout(creditTimer);
+      creditTimer = null;
+      return;
+    }
+    creditTimer ??= setTimeout(() => {
+      creditsCollapsed = true;
+      credits.forEach((node) => {
+        node.hidden = true;
+      });
+      creditTimer = null;
+    }, 5000);
+  }
+  const creditObserver = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.intersectionRatio >= 1) visibleCredits.add(entry.target);
+        else visibleCredits.delete(entry.target);
+      });
+      syncCreditTimer();
+    },
+    { threshold: 1 },
+  );
+  credits.forEach((node) => creditObserver.observe(node));
+  document.addEventListener("visibilitychange", syncCreditTimer);
 
   const images = [...map.querySelectorAll("img")];
   const error = document.querySelector(".map-error");
@@ -220,7 +251,7 @@
     );
     error.hidden = !failed;
     expand.disabled = failed;
-    play.disabled = failed;
+    play.disabled = failed || Boolean(loading);
     if (failed) pauseRide();
   };
   for (const image of images) {
@@ -254,6 +285,11 @@
   const remaining = document.querySelector("#ride-remaining");
   const feedback = document.querySelector("#ride-feedback");
   const direction = document.querySelector(".ride-direction");
+  const enter = document.querySelector("#ride-enter");
+  const exit = document.querySelector("#ride-exit");
+  const consolePanel = experience.querySelector(".route-console");
+  const endpoints = experience.querySelector(".route-endpoints");
+  const rideControls = experience.querySelector(".ride-controls");
   const trail = map.querySelector(".ride-trail");
   const marker = map.querySelector(".ride-position");
   const positions = { balanced: 0, scenic: 0 };
@@ -262,6 +298,57 @@
   let frame;
   let lastTick;
   let visible = false;
+  function setMode(mode, focus = true) {
+    pauseRide();
+    experience.dataset.mode = mode;
+    const guiding = mode === "guidance";
+    consolePanel.hidden = guiding;
+    endpoints.hidden = guiding;
+    rideControls.hidden = !guiding;
+    exit.hidden = !guiding;
+    updateMapInsets();
+    if (focus) (guiding ? exit : enter).focus({ preventScroll: true });
+  }
+  function updateMapInsets() {
+    const panel =
+      experience.dataset.mode === "guidance"
+        ? experience.querySelector(".ride-bottom")
+        : consolePanel;
+    experience.style.setProperty(
+      "--sheet-space",
+      `${Math.ceil(panel.getBoundingClientRect().height) + 24}px`,
+    );
+    const heading = experience.querySelector(".ride-heading");
+    const mapTop =
+      experience.dataset.mode === "guidance"
+        ? heading.offsetTop + heading.getBoundingClientRect().height + 16
+        : endpoints.offsetTop + endpoints.getBoundingClientRect().height + 16;
+    experience.style.setProperty("--map-top", `${Math.ceil(mapTop)}px`);
+  }
+  const sheetObserver = new ResizeObserver(updateMapInsets);
+  sheetObserver.observe(consolePanel);
+  sheetObserver.observe(experience.querySelector(".ride-bottom"));
+  sheetObserver.observe(experience.querySelector(".ride-heading"));
+  sheetObserver.observe(endpoints);
+  enter.addEventListener("click", async () => {
+    setMode("guidance");
+    await loadRide();
+    if (experience.dataset.mode === "guidance" && !play.disabled)
+      play.focus({ preventScroll: true });
+  });
+  exit.addEventListener("click", () => setMode("choose"));
+  document.addEventListener("keydown", (event) => {
+    if (
+      event.key === "Escape" &&
+      !dialog.open &&
+      (experience.contains(document.activeElement) ||
+        document.activeElement === document.body) &&
+      experience.dataset.mode === "guidance"
+    ) {
+      event.preventDefault();
+      setMode("choose");
+    }
+  });
 
   const metres = (value) =>
     value < 1000 ? `${Math.round(value)} m` : `${(value / 1000).toFixed(1)} km`;
@@ -365,6 +452,13 @@
         Number(examples[selected].distance) * 1000) *
         (1 - fraction),
     );
+    const seconds =
+      (ride?.[selected].route.duration_s ||
+        Number(examples[selected].minutes) * 60) *
+      (1 - fraction);
+    document.querySelector("#ride-duration").textContent = arrived
+      ? "도착"
+      : `약 ${Math.max(1, Math.round(seconds / 60))}분`;
     progress.value = String(Math.round(fraction * 1000));
     play.textContent = reduced.matches
       ? "안내 살펴보기"
@@ -377,15 +471,17 @@
             : "안내 재생";
     if (!ride) return;
     const model = ride[selected];
-    const step = model.steps[currentStep()];
+    const step =
+      model.steps[Math.min(currentStep() + 1, model.steps.length - 1)];
     status.textContent = arrived
       ? "일광해수욕장 도착"
       : playing
         ? "안내 재생 중"
         : "주행 미리보기";
-    instruction.textContent = arrived
-      ? "마음에 드는 길을 앱에서 만나세요."
-      : step.text;
+    instruction.textContent = arrived ? "안내를 마쳤어요." : step.text;
+    document.querySelector("#ride-turn-distance").textContent = metres(
+      Math.max(0, (step.fraction - fraction) * model.route.distance_m),
+    );
     const sign = Math.abs(step.sign);
     const turnPaths = {
       0: "M12 20V4m-6 6 6-6 6 6",
@@ -499,7 +595,7 @@
   new IntersectionObserver(([entry]) => {
     visible = entry.isIntersecting;
     if (!visible) pauseRide();
-  }).observe(document.querySelector(".ride-controls"));
+  }).observe(experience.querySelector(".ride-bottom"));
   reduced.addEventListener("change", () => {
     pauseRide();
     paintRide();
@@ -507,4 +603,6 @@
   select(selected, false);
   paintRide();
   syncImageState();
+  experience.classList.add("is-app");
+  setMode("choose", false);
 })();

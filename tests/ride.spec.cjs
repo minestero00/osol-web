@@ -3,6 +3,20 @@ const fs = require("node:fs");
 const AxeBuilder = require("@axe-core/playwright").default;
 const path = require("node:path");
 const source = require("../assets/maps/comparison/source.json");
+async function openGuidance(page) {
+  if (await page.locator("#ride-enter").isVisible())
+    await page.locator("#ride-enter").click();
+  await expect(page.locator("#route-experience")).toHaveAttribute(
+    "data-mode",
+    "guidance",
+  );
+}
+async function choose(page, id) {
+  if (await page.locator("#ride-exit").isVisible())
+    await page.locator("#ride-exit").click();
+  await page.locator(`[data-route=${id}]`).click();
+  await openGuidance(page);
+}
 async function scrub(page, value) {
   await page.locator("#ride-progress").evaluate((node, value) => {
     node.value = String(value);
@@ -11,11 +25,29 @@ async function scrub(page, value) {
 }
 async function stage(page, name, info) {
   if (!process.env.OSOL_SCREENSHOTS) return;
+  const originalViewport = page.viewportSize();
+  await page.setViewportSize({
+    ...originalViewport,
+    height: Math.max(1000, originalViewport.height),
+  });
+  await page.locator("#route-experience").scrollIntoViewIfNeeded();
   const dir = path.join(process.env.OSOL_SCREENSHOTS, info.project.name);
   fs.mkdirSync(dir, { recursive: true });
+  await page.evaluate(async () => {
+    await new Promise((resolve) =>
+      requestAnimationFrame(() => requestAnimationFrame(resolve)),
+    );
+    await Promise.all(
+      document
+        .getAnimations()
+        .filter((a) => a.effect?.getComputedTiming().iterations !== Infinity)
+        .map((a) => a.finished.catch(() => {})),
+    );
+  });
   await page
     .locator("#route-experience")
     .screenshot({ path: path.join(dir, name + ".png") });
+  await page.setViewportSize(originalViewport);
 }
 test("route exploration uses actual instructions, preserves independent progress and reaches arrival", async ({
   page,
@@ -23,6 +55,7 @@ test("route exploration uses actual instructions, preserves independent progress
   const errors = [];
   page.on("pageerror", (e) => errors.push(e.message));
   await page.goto("/");
+  await openGuidance(page);
   await page.locator("#ride-play").click();
   await expect(page.locator("#ride-play")).toHaveText("일시정지");
   await expect
@@ -36,7 +69,7 @@ test("route exploration uses actual instructions, preserves independent progress
   await page.locator("#ride-next").click();
   const actual = source.find((r) => r.id === "scenic").response.routes[0];
   await expect(page.locator("#ride-instruction")).toHaveText(
-    actual.instructions[1].text,
+    actual.instructions[2].text,
   );
   const projected =
     require("../assets/maps/comparison/projection.json").routes.find(
@@ -53,12 +86,12 @@ test("route exploration uses actual instructions, preserves independent progress
   await scrub(page, 500);
   await expect(page.locator("#ride-remaining")).toHaveText("8.4 km");
   const marker = await page.locator(".ride-position").getAttribute("transform");
-  await page.locator("[data-route=balanced]").click();
+  await choose(page, "balanced");
   await expect(page.locator("#ride-progress")).toHaveValue("0");
   await expect(page.locator("#ride-remaining")).toHaveText("14.8 km");
   await scrub(page, 750);
   await expect(page.locator("#ride-remaining")).toHaveText("3.7 km");
-  await page.locator("[data-route=scenic]").click();
+  await choose(page, "scenic");
   await expect(page.locator("#ride-progress")).toHaveValue("500");
   await expect(page.locator(".ride-position")).toHaveAttribute(
     "transform",
@@ -90,14 +123,16 @@ test("failed guidance can retry without losing selection or claiming playback", 
       : route.continue(),
   );
   await page.goto("/");
-  await page.locator("#ride-play").click();
+  await openGuidance(page);
   await expect(page.locator("#ride-play")).toHaveText("안내 다시 불러오기");
   await expect(page.locator("#ride-status")).toHaveText(
     "안내를 불러오지 못했어요",
   );
   await expect(page.locator("#ride-progress")).toBeDisabled();
+  await page.locator("#ride-exit").click();
   await page.locator("[data-route=balanced]").click();
   fail = false;
+  await openGuidance(page);
   await page.locator("#ride-play").click();
   await expect(page.locator("#ride-play")).toHaveText("일시정지");
   await expect(page.locator("#atlas-map .selected")).toHaveAttribute(
@@ -110,6 +145,7 @@ test("reduced motion is a keyboard-operated discrete tour and map failure stops 
 }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
+  await openGuidance(page);
   await expect(page.locator("#ride-play")).toHaveText("안내 살펴보기");
   await page.locator("#ride-play").click();
   await expect(page.locator("#ride-progress")).toBeFocused();
@@ -134,6 +170,7 @@ test("leaving the stage and opening the map pause playback without auto-resume",
   page,
 }) => {
   await page.goto("/");
+  await openGuidance(page);
   await page.locator("#ride-play").click();
   await expect(page.locator("#ride-play")).toHaveText("일시정지");
   await page.locator("h1").scrollIntoViewIfNeeded();
@@ -149,6 +186,7 @@ test("guidance stage reflows in both themes without clipping controls", async ({
   page,
 }, info) => {
   await page.goto("/");
+  await openGuidance(page);
   await page.locator("#ride-play").click();
   await page.locator("#ride-play").click();
   await scrub(page, 420);
@@ -191,7 +229,7 @@ test("cinematic preview and homepage both support working guidance without scrip
   page.on("pageerror", (error) => errors.push(error.message));
   for (const url of ["/", "/cinematic.html"]) {
     await page.goto(url);
-    await page.locator("[data-route=balanced]").click();
+    await choose(page, "balanced");
     await expect(page.locator("#ride-remaining")).toHaveText("14.8 km");
     await page.locator("#ride-play").click();
     await expect(page.locator("#ride-play")).toHaveText("일시정지");
@@ -200,4 +238,70 @@ test("cinematic preview and homepage both support working guidance without scrip
     await expect(page.locator(".ride-position")).toBeVisible();
   }
   expect(errors).toEqual([]);
+});
+
+test("app modes keep selection and keyboard focus, return pauses guidance", async ({
+  page,
+}, info) => {
+  await page.goto("/");
+  await expect(page.locator("#ride-enter")).toBeVisible();
+  const stageBox = await page.locator("#route-experience").boundingBox();
+  const enterBox = await page.locator("#ride-enter").boundingBox();
+  expect(enterBox.y + enterBox.height).toBeLessThanOrEqual(
+    stageBox.y + stageBox.height,
+  );
+  await expect(page.locator("#ride-play")).toBeHidden();
+  await stage(page, "app-choose-mobile", info);
+  await openGuidance(page);
+  await expect(page.locator("#ride-play")).toBeFocused();
+  await expect(page.locator(".route-console")).toBeHidden();
+  await page.locator("#ride-play").click();
+  await page.keyboard.press("Escape");
+  await expect(page.locator("#ride-enter")).toBeFocused();
+  await expect(page.locator(".route-console")).toBeVisible();
+  await openGuidance(page);
+  await expect(page.locator("#ride-play")).not.toHaveText("일시정지");
+  await stage(page, "app-guidance-mobile", info);
+});
+
+test("credits collapse once after readable exposure; licence information remains discoverable", async ({
+  page,
+}) => {
+  await page.goto("/");
+  const credit = page.locator(".film [data-map-credit]");
+  await credit.scrollIntoViewIfNeeded();
+  await expect(credit).toBeVisible();
+  await expect(credit).toBeHidden({ timeout: 9000 });
+  await page.locator(".map-expand").click();
+  await expect(page.locator(".dialog-attribution")).toBeHidden();
+  await page.keyboard.press("Escape");
+  await page.locator('a[href="help.html#map-licenses"]').click();
+  await expect(page.locator("#map-licenses")).toBeVisible();
+  await expect(page.locator("#map-licenses")).toContainText("OpenStreetMap");
+  await expect(page.locator("#map-licenses")).toContainText("Protomaps");
+});
+test("real route remains unobscured by the mobile choice sheet and turn banner", async ({
+  page,
+}) => {
+  await page.goto("/");
+  for (const width of [320, 375, 768]) {
+    await page.setViewportSize({ width, height: 1000 });
+    await expect
+      .poll(async () => {
+        const map = await page.locator("#map-home").boundingBox();
+        const sheet = await page.locator(".route-console").boundingBox();
+        return Math.ceil(map.y + map.height) <= Math.ceil(sheet.y);
+      })
+      .toBe(true);
+  }
+  await openGuidance(page);
+  await scrub(page, 420);
+  await expect
+    .poll(async () => {
+      const map = await page.locator("#map-home").boundingBox();
+      const banner = await page.locator(".ride-heading").boundingBox();
+      const sheet = await page.locator(".ride-bottom").boundingBox();
+      return map.y >= banner.y + banner.height && map.y + map.height <= sheet.y;
+    })
+    .toBe(true);
 });
